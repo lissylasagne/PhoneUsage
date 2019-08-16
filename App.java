@@ -1,4 +1,4 @@
-package infovis.phoneUsage;
+package phoneUsage;
 
 import java.util.ArrayList;
 

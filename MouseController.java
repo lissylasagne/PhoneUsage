@@ -1,4 +1,4 @@
-package infovis.phoneUsage;
+package phoneUsage;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;

@@ -1,4 +1,4 @@
-package infovis.phoneUsage;
+package phoneUsage;
 
 import infovis.gui.GUI;
 
@@ -32,8 +32,10 @@ public class Scatterplot {
 				GUI application = new GUI();
 				application.setView(new Scatterplot().getView());
 				application.getJFrame().setVisible(true);
+				
 			}
 		});
+		
+		
 	}
-
 }

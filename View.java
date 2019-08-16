@@ -1,4 +1,4 @@
-package infovis.phoneUsage;
+package phoneUsage;
 
 import infovis.debug.Debug;
 
@@ -13,16 +13,19 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import java.util.stream.Collectors;
 
-public class View extends JPanel {
+public class View extends JPanel  {
 	     private Model model = null;
 	     private Graphics2D graphics;
 	     private int counter = 0;
 	     //visualisation mode
-	     private int mode = 0;
+	     //private int mode = 0;
+	     private int mode = 1;
+	     
 	     //app category
 	     //1=all, 2=entertainment, 2=communication, 3=organisation
 	     private int category = 3;
@@ -246,7 +249,134 @@ public class View extends JPanel {
 					g2D.translate((-size*24), size);
 				}
 			}
+			
+			//Koordinatensystem Tagesübersicht
+			if(mode == 1) {
+				
+				//Cartesian Frame
+				//CartesianPanel panel;
+				 
+				//public CartesianFrame() {
+					//panel = new CartesianPanel();
+					//add(panel);
+				//}
+				 
+				//public void showUI() {
+					//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					//setTitle("Cartesian");
+					//setSize(800, 800);
+					//setVisible(true);
+				//}
+				
+				//Cartesian Panel
+				
+				// X-Achse Koordinaten (konstant)
+				//	Start (50,800) Ende (800,800)
+				final int xAchse_x1 = 50;
+				final int xAchse_x2 = 1300;
+				final int xAchse_y = 800;
+				 
+				// Y-Achse Koordinaten (konstant)
+				//	Start (50,800) Ende (50,50) 
+				final int yAchse_y1 = 50;
+				final int yAchse_y2 = 800;
+				final int yAchse_x = 50;
+				 
+				//Achsenpfeile durch Hipotenusen von Dreieck
+				 
+				// setzen der Dreieckskatheten
+				final int firstLenght = 10;
+				final int secondLenght = 5;
+				 
+				// Größe Nulpunktanzeige
+				final int originCoordinateLenght = 6;
+				 
+				// Abstand der Zahlen an Achse 
+				final int axisLabelDistance = 40;
+				 
+				 
+				
+				  
+				// X-Achse ((50,800) bis (800,800))
+				g2D.drawLine(xAchse_x1, xAchse_y,
+						xAchse_x2, xAchse_y);
+				  
+				// Y-Achse ((50,800) bis (50,50))
+				g2D.drawLine(yAchse_x, yAchse_y1,
+						yAchse_x, yAchse_y2);
+				  
+				// Pfeil X-Achse
+				g2D.drawLine(xAchse_x2 - firstLenght,
+						xAchse_y - secondLenght,
+						xAchse_x2, xAchse_y);
+				g2D.drawLine(xAchse_x2 - firstLenght,
+						xAchse_y + secondLenght,
+						xAchse_x2, xAchse_y);
+				  
+				//Pfeil Y-Achse
+				g2D.drawLine(yAchse_x - secondLenght,
+						yAchse_y1 + firstLenght,
+						yAchse_x, yAchse_y1);
+				g2D.drawLine(yAchse_x + secondLenght, 
+						yAchse_y1 + firstLenght,
+						yAchse_x, yAchse_y1);
+				  
+				// Zeichnen des Nullpunkts
+				g2D.fillOval(
+						xAchse_x1 - (originCoordinateLenght / 2), 
+						yAchse_y2 - (originCoordinateLenght / 2),
+						originCoordinateLenght, originCoordinateLenght);
+				  
+				// Zeichnen von "Urzeit" und "Dauer"
+				g2D.drawString("Uhrzeit", xAchse_x2 - axisLabelDistance / 2,
+						xAchse_y + axisLabelDistance);
+				g2D.drawString("Dauer", yAchse_x - axisLabelDistance,
+						yAchse_y1 + axisLabelDistance / 2);
+				//g2.drawString("(0, 0)", X_AXIS_FIRST_X_COORD - AXIS_STRING_DISTANCE,
+				     //Y_AXIS_SECOND_Y_COORD + AXIS_STRING_DISTANCE);
+				  
+				// Achsenbeschriftung
+				int xCoordNumbers = 24; // in Stunden
+				int yCoordNumbers = 61; // in Minuten
+				int xLength = (xAchse_x2 - xAchse_x1)
+						/ xCoordNumbers;
+				int yLength = (yAchse_y2 - yAchse_y1)
+						/ yCoordNumbers;
+				  
+				// Zeichnen der X-Achsenbeschriftung
+				for(int i = 0; i < xCoordNumbers;) {
+					g2D.drawLine(xAchse_x1 + (i * xLength),
+							xAchse_y - secondLenght,
+							xAchse_x1 + (i * xLength),
+							xAchse_y + secondLenght);
+					g2D.drawString(Integer.toString(i), 
+							xAchse_x1 + (i * xLength) - 3,
+							xAchse_y + axisLabelDistance);
+					i+= 1;
+				}
+				  
+				//Zeichnen der Y-Achsenbeschriftung
+				for(int i = 0; i < yCoordNumbers;) {
+					g2D.drawLine(yAchse_x - secondLenght,
+							yAchse_y2 - (i * yLength), 
+							yAchse_x + secondLenght,
+							yAchse_y2 - (i * yLength));
+					g2D.drawString(Integer.toString(i), 
+							yAchse_x - axisLabelDistance, 
+							yAchse_y2 - (i * yLength));
+					i+=10;
+				}
+				//for(Data d : data){
+					//g2D.drawOval( (int) data.getHour(), (int) data.getDuration);
+				//}
+			}
 		}
+
+		
+		
+		
+			
+		
 		
 		public void setModel(Model model) {
 			this.model = model;
