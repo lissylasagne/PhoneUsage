@@ -252,24 +252,7 @@ public class View extends JPanel  {
 			
 			//Koordinatensystem Tagesübersicht
 			if(mode == 1) {
-				
-				//Cartesian Frame
-				//CartesianPanel panel;
-				 
-				//public CartesianFrame() {
-					//panel = new CartesianPanel();
-					//add(panel);
-				//}
-				 
-				//public void showUI() {
-					//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					//setTitle("Cartesian");
-					//setSize(800, 800);
-					//setVisible(true);
-				//}
-				
-				//Cartesian Panel
-				
+								
 				// X-Achse Koordinaten (konstant)
 				//	Start (50,800) Ende (800,800)
 				final int xAchse_x1 = 50;
@@ -366,8 +349,23 @@ public class View extends JPanel  {
 							yAchse_y2 - (i * yLength));
 					i+=10;
 				}
-				//for(Data d : data){
-					//g2D.drawOval( (int) data.getHour(), (int) data.getDuration);
+				
+				// Graph pro Kategorie verschiedene buttons zum koordinatensystem wechels anderer tag
+				// in dem sinne : g2D.drawOval(i,hourlyUsageEnter[i]) ab zeile 115
+					
+				//for (App a : apps) {
+					//for(Usage u : a.getUsage()) {
+						//if(u.getDay() == 0) {
+							//for(int i=0; i<24; i++) {
+								//int hour = u.getHour();
+								//int duration = u.getDuration();
+								//System.out.println(hour);
+								
+								//g2D.drawOval( hour, duration);
+							//}
+							
+						//}
+					//}
 				//}
 			}
 		}
