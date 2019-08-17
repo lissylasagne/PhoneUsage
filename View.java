@@ -28,11 +28,19 @@ public class View extends JPanel  {
 	     
 	     //app category
 	     //1=all, 2=entertainment, 2=communication, 3=organisation
-	     private int category = 3;
+	     private int category = 10; 
 	     private Rectangle2D.Double R_all;
 	     private Rectangle2D.Double R_enter;
 	     private Rectangle2D.Double R_comm;
 	     private Rectangle2D.Double R_orga;
+	     //Für Koordinatensystem
+	     private Rectangle2D.Double D_1;
+	     private Rectangle2D.Double D_2;
+	     private Rectangle2D.Double D_3;
+	     private Rectangle2D.Double D_4;
+	     private Rectangle2D.Double D_5;
+	     private Rectangle2D.Double D_6;
+	     private Rectangle2D.Double D_7;
 	     
 	     private ArrayList<App> apps = new ArrayList<App>();
 	     private ArrayList<Usage> usage = new ArrayList<Usage>();
@@ -350,24 +358,166 @@ public class View extends JPanel  {
 					i+=10;
 				}
 				
-				// Graph pro Kategorie verschiedene buttons zum koordinatensystem wechels anderer tag
-				// in dem sinne : g2D.drawOval(i,hourlyUsageEnter[i]) ab zeile 115
+				//Buttons Tageswechsel      // Überlappt sich noch mit Koordinatensystem
+				double size2 = getWidth()/28;
+				g2D.setColor(Color.WHITE);
+				g2D.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
+				int fontSize = (int)(size2/3);
+				Color red = new Color(255,109,76);
+			    Color grey = new Color(240,240,240);
+			    g2D.setColor(grey);
+			    
+			    D_1 = new Rectangle2D.Double((int)(1.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_1);
+			    D_2 = new Rectangle2D.Double((int)(5.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_2);
+			    D_3 = new Rectangle2D.Double((int)(8.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_3);
+			    D_4 = new Rectangle2D.Double((int)(12.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_4);
+			    D_5 = new Rectangle2D.Double((int)(15.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_5);
+			    D_6 = new Rectangle2D.Double((int)(19.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_6);
+			    D_7 = new Rectangle2D.Double((int)(22.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_7);
+			    
+			    g2D.setColor(red);
+			    
+			    if(category == 4) {
+			    	g2D.fill(D_1);
+			    } else if(category == 5) {
+			    	g2D.fill(D_2);
+			    } else if(category == 6) {
+			    	g2D.fill(D_3);
+			    } else if(category == 7) {
+			    	g2D.fill(D_4);
+			    } else if(category == 8) {
+			    	g2D.fill(D_5);
+			    } else if(category == 9) {
+			    	g2D.fill(D_6);
+			    } else if(category == 10) {
+			    	g2D.fill(D_7);
+			    }
+				
+				
+				
+				Font font = new Font("Sans", Font.PLAIN, fontSize);
+			    g2D.setFont(font);
+			    g2D.setColor(Color.BLACK);
+				g2D.drawString("Tag 1", (int)(2*size2), (int)(size2)); 
+				g2D.drawString("Tag 2", (int)(5.5*size2), (int)(size2));
+			    g2D.drawString("Tag 3", (int)(9*size2), (int)(size2)); 
+			    g2D.drawString("Tag 4", (int)(12.5*size2), (int)(size2)); 
+			    g2D.drawString("Tag 5", (int)(16*size2), (int)(size2));
+			    g2D.drawString("Tag 6", (int)(19.5*size2), (int)(size2));
+			    g2D.drawString("Tag 7", (int)(23*size2), (int)(size2));
+			    
+			    //g2D.translate(2*size2, 2*size2);
+				
+				
+				
+				// START ANSICHT
+			    // Automatisches ändern des Koordinatensystems
+			    int j;
+			    if (category == 4) {
+			    	j = 0;
+			    } 
+			    else if(category == 5) {
+			    	j = 1;
+			    }
+			    else if(category == 6) {
+			    	j = 2;
+			    }
+			    else if(category == 7) {
+			    	j = 3;
+			    }
+			    else if (category == 8) {
+			    	j = 4;
+			    }
+			    else if (category == 9) {
+			    	j = 5;
+			    }
+			    else {
+			    	j = 6;
+			    }
+				// Unterhaltungsstunden pro Tag
+				int[] hourlyUsageEnterDay = new int[numDays*24];
+				
+				for(int i = 0; i < hourlyUsageEnterDay.length; i++) {
+					hourlyUsageEnterDay[i] = 0;
+					for(Usage u : usage) {
+						if (u.getDay()== j) {
+							if(i == (u.getDay() * 24 + u.getHour())) {
+								if(u.getApp().getCategory() == "Unterhaltung") {
+									hourlyUsageEnterDay[i] += u.getDuration();
+								}
+							}
+						}
+					}
+				}
+				//System.out.println(hourlyUsageEnterDay[0]);
+				
+				
+				//Kommunikationsstunden pro Tag
+				int[] hourlyUsageCommDay = new int[numDays*24];
+				
+				for(int i = 0; i < hourlyUsageCommDay.length; i++) {
+					hourlyUsageCommDay[i] = 0;
+					for(Usage u : usage) {
+						if (u.getDay()== j) {
+							if(i == (u.getDay() * 24 + u.getHour())) {
+								if(u.getApp().getCategory() == "Kommunikation") {
+									hourlyUsageCommDay[i] += u.getDuration();
+								}
+							}
+						}
+					}
+				}
+				//System.out.println(hourlyUsageCommDay[0]);
+				
+				//Organisationsstunden pro Tag
+				int[] hourlyUsageOrgaDay = new int[numDays*24];
+				
+				for(int i = 0; i < hourlyUsageOrgaDay.length; i++) {
+					hourlyUsageOrgaDay[i] = 0;
+					for(Usage u : usage) {
+						if (u.getDay()== j) {
+							if(i == (u.getDay() * 24 + u.getHour())) {
+								if(u.getApp().getCategory() == "Organisatiorisches") {
+									hourlyUsageOrgaDay[i] += u.getDuration();
+								}
+							}
+						}
+					}
+				}
+				//System.out.println(hourlyUsageOrgaDay[0]);
+				
+				/*
+				// Zeichnen Punkte Unterhaltung
+				for (int i = 0; i<24; i++) {
+					g2D.setColor(java.awt.Color.green);
+					g2D.drawOval(0,hourlyUsageEnterDay[0]); // warum 4 ints bei Ausgabe 1????
+					//g2D.fillOval(); brauch ich das?
+				}
+				
+				//Zeichnen Punkte Kommunikation
+				for (int i = 0; i<24; i++) {
+					g2D.setColor(java.awt.Color.red);
+					g2D.drawOval(0,hourlyUsageCommDay[0]); // warum 4 ints bei Ausgabe 1????
+					//g2D.fillOval(); brauch ich das?
+				}
+				
+				//Zeichnen Punkte Organisation
+				for (int i = 0; i<24; i++) {
+					g2D.setColor(java.awt.Color.blue);
+					g2D.drawOval(0,hourlyUsageOrgaDay[0]); // warum 4 ints bei Ausgabe 1????
+					//g2D.fillOval(); brauch ich das?
+				}
+				*/
 					
-				//for (App a : apps) {
-					//for(Usage u : a.getUsage()) {
-						//if(u.getDay() == 0) {
-							//for(int i=0; i<24; i++) {
-								//int hour = u.getHour();
-								//int duration = u.getDuration();
-								//System.out.println(hour);
-								
-								//g2D.drawOval( hour, duration);
-							//}
-							
-						//}
-					//}
-				//}
 			}
+			
 		}
 
 		
@@ -394,6 +544,34 @@ public class View extends JPanel  {
 		
 		public Rectangle2D.Double getR_orga() {
 			return R_orga;
+		}
+		
+		public Rectangle2D.Double getD_1() {
+			return D_1;
+		}
+		
+		public Rectangle2D.Double getD_2() {
+			return D_2;
+		}
+		
+		public Rectangle2D.Double getD_3() {
+			return D_3;
+		}
+		
+		public Rectangle2D.Double getD_4() {
+			return D_4;
+		}
+		
+		public Rectangle2D.Double getD_5() {
+			return D_5;
+		}
+		
+		public Rectangle2D.Double getD_6() {
+			return D_6;
+		}
+		
+		public Rectangle2D.Double getD_7() {
+			return D_7;
 		}
 		
 		public int getCategory() {
