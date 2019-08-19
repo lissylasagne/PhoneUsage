@@ -57,7 +57,7 @@ public class Usage {
 	}
 	
 	public void print() {
-		Debug.println("App: " + getApp());
+		Debug.println("App: " + getAppName());
 		Debug.println("Day: " + getDay());
 		Debug.println("Hour: " + getHour());
 		Debug.println("Duration: " + getDuration());

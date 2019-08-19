@@ -22,7 +22,7 @@ public class View extends JPanel {
 	     private Graphics2D graphics;
 	     private int counter = 0;
 	     //visualisation mode
-	     private int mode = 0;
+	     private int mode = 2;
 	     //app category
 	     //1=all, 2=entertainment, 2=communication, 3=organisation
 	     private int category = 3;
@@ -47,7 +47,8 @@ public class View extends JPanel {
 			graphics = g2D;
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.clearRect(0, 0, getWidth(), getHeight());
-				
+			
+			//counter so it doesnt run twice
 			if(counter == 0) {
 				int labelCount = 0;
 			       for (String l : model.getLabels()) {
@@ -57,7 +58,7 @@ public class View extends JPanel {
 					labelCount++;
 				}
 			        
-		        
+		        //get number of days
 		        int rangeCount = 0;
 				for (Range range : model.getRanges()) {
 					if(rangeCount == labelCount) {
@@ -107,6 +108,8 @@ public class View extends JPanel {
 					//Debug.println("Total:" + a.getTotal());
 				}
 				
+				//arrays with usage per hour: [i] is the hour
+				//i = 1 is day 0 hour 1, i = 25 is day 1 hour 1...
 				hourlyUsage = new int[numDays*24];
 				
 				for(int i = 0; i < hourlyUsage.length; i++) {
@@ -116,7 +119,6 @@ public class View extends JPanel {
 							hourlyUsage[i] += u.getDuration();
 						}
 					}
-					//Debug.println("Hourly Usage" + i + ": " + hourlyUsage[i]);					
 				}
 				
 				hourlyUsageEnter = new int[numDays*24];
@@ -130,7 +132,6 @@ public class View extends JPanel {
 							}
 						}
 					}
-					//Debug.println("Hourly Usage" + i + ": " + hourlyUsage[i]);					
 				}
 				
 				hourlyUsageComm = new int[numDays*24];
@@ -144,7 +145,6 @@ public class View extends JPanel {
 							}
 						}
 					}
-					//Debug.println("Hourly Usage" + i + ": " + hourlyUsage[i]);					
 				}
 				
 				hourlyUsageOrga = new int[numDays*24];
@@ -153,12 +153,11 @@ public class View extends JPanel {
 					hourlyUsageOrga[i] = 0;
 					for(Usage u : usage) {
 						if(i == (u.getDay() * 24 + u.getHour())) {
-							if(u.getApp().getCategory() == "Organisatiorisches") {
+							if(u.getApp().getCategory() == "Organisatorisches") {
 								hourlyUsageOrga[i] += u.getDuration();
 							}
 						}
 					}
-					//Debug.println("Hourly Usage" + i + ": " + hourlyUsage[i]);					
 				}
 				counter++;
 			}
@@ -171,6 +170,7 @@ public class View extends JPanel {
 				g2D.setColor(Color.WHITE);
 				g2D.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
 				
+				//draw category buttons
 				int fontSize = (int)(size/1.5);
 
 			    Color red = new Color(255,109,76);
@@ -201,7 +201,6 @@ public class View extends JPanel {
 			    	g2D.fill(R_orga);
 			    }
 			    
-			    
 			    Font font = new Font("Sans", Font.PLAIN, fontSize);
 			    g2D.setFont(font);
 			    g2D.setColor(Color.BLACK);
@@ -212,11 +211,13 @@ public class View extends JPanel {
 			    g2D.drawString("Organisatorisch", (int)(20.75*size), (int)(size)); 
 				
 				g2D.translate(2*size, 2*size);
-					
+				
+				//for loops: days and hours
 				for(int row = 0; row < hourlyUsage.length/24; row++) {
 					for(int column = 0; column < 24; column++) {
 						Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
 						
+						//map duration from 0 to 60 to color from 255 to 0
 						int color = 0; 
 						
 						if(category == 0) {
@@ -232,6 +233,7 @@ public class View extends JPanel {
 						g2D.setColor(new Color(color, color, color, 255));
 						g2D.fill(rect);
 						
+						//day and night color
 						if(column <= 8 || column >= 20) {
 							g2D.setColor(new Color(35, 64, 153, 55));
 						}
@@ -244,6 +246,126 @@ public class View extends JPanel {
 						g2D.translate(size, 0);
 						}
 					g2D.translate((-size*24), size);
+				}
+			} 
+			//pie chart
+			else if(mode==2) {
+				int size = (getWidth() + getHeight())/5;
+				
+				//entertainment
+				Color yellow = new Color(255,205,3);
+				//communication
+				Color red = new Color(255,3,91);
+				//orga
+				Color blue = new Color(32,177,199);
+				
+				int numHours = hourlyUsage.length;
+				
+				int usage = 0;
+				int enter = 0;
+				int comm = 0;
+				int orga = 0;
+				
+				for(int i = 0; i < numHours; i++) {
+					usage += hourlyUsage[i];
+					enter += hourlyUsageEnter[i];
+					comm += hourlyUsageComm[i];
+					orga += hourlyUsageOrga[i];
+				}
+				
+				Debug.println("Total: " + usage + " Enter: "+ enter + " Comm: " + comm + " Orga: " + orga);
+				
+				if(category == 0) {
+					//map usage to 360 degree and paint diagramm
+					int enter360 = (enter * 360)/usage;
+					int comm360 = (comm * 360)/usage;
+					int orga360 = (orga * 360)/usage;
+					
+					while((enter360+comm360+orga360) != 360) {
+						int random = (int) (Math.random()*3);
+						switch(random) {
+							case 0:
+								enter360++; 
+								break;
+							case 1: 
+								comm360++;
+								break;
+							case 2: 
+								orga360++;
+								break;
+						}
+					}
+					Debug.println("Total: " + usage + " Enter: "+ enter + " Comm: " + comm + " Orga: " + orga);
+					
+					g2D.setColor(yellow);
+					g2D.fillArc((int)(getWidth()/2)-size/2, (int)(getHeight()/2)-size/2, size, size, 0, enter360);
+					g2D.setColor(red);
+					g2D.fillArc((int)(getWidth()/2)-size/2, (int)(getHeight()/2)-size/2, size, size, enter360, comm360);
+					g2D.setColor(blue);
+					g2D.fillArc((int)(getWidth()/2)-size/2, (int)(getHeight()/2)-size/2, size, size, enter360+comm360, orga360);
+				} else if(category == 1 || category == 2 || category == 3) {
+					String cat = "";
+					int total = 0;
+					switch(category) {
+						case 1:
+							cat = "Unterhaltung";
+							g2D.setColor(yellow);
+							total = enter;
+							break;
+						case 2:
+							cat = "Kommunikation";
+							g2D.setColor(red);
+							total = comm;
+							break;
+						case 3:
+							cat = "Organisatorisches";
+							g2D.setColor(blue);
+							total = orga;
+							break;
+					}
+					
+					g2D.fillOval((getWidth()/2)-size/2, (int)(getHeight()/2)-size/2, size, size);
+										
+					//get total 360 degree value
+					int counter = 0;
+					
+					for (App a : apps) {
+						if(a.getCategory().equals(cat)) {
+							counter++;
+						}
+					}
+					Debug.println("total: " + total);
+					
+					//array with app duration; i = app
+					int[] appDuration = new int[counter];
+					counter = 0;
+					
+					for (App a : apps) {
+						if(a.getCategory().equals(cat)) {
+							for(Usage u : a.getUsage()) {
+								appDuration[counter] += u.getDuration();
+							}
+							counter++;
+						}
+					} 
+					
+					int totalArcSize = 0;
+					for(int i = 0; i < appDuration.length; i++) {
+						Debug.println("counter. " + i + " array: " + appDuration[i]);
+						int arcSize = (appDuration[i] * 360)/total;
+						//set Color
+						if(i%2 == 0) {
+							g2D.setColor(new Color(0,0,0,50));
+						} else {
+							g2D.setColor(new Color(255,255,255,50));
+						}
+						
+						if(i == appDuration.length-1) {
+							arcSize = 360 - totalArcSize;
+						}
+						g2D.fillArc((int)(getWidth()/2)-size/2, (int)(getHeight()/2)-size/2, size, size, totalArcSize, arcSize);
+						totalArcSize += arcSize;
+					}
 				}
 			}
 		}
@@ -274,5 +396,13 @@ public class View extends JPanel {
 		
 		public void setCategory(int cat) {
 			this.category = cat;
+		}
+		
+		public int getMode() {
+			return mode;
+		}
+		
+		public void setMode(int mode) {
+			this.mode = mode;
 		}
 }
