@@ -360,13 +360,13 @@ public class View extends JPanel  {
 				
 				//Buttons Tageswechsel      // Überlappt sich noch mit Koordinatensystem
 				double size2 = getWidth()/28;
-				g2D.setColor(Color.WHITE);
-				g2D.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
+				//g2D.setColor(Color.WHITE);
+				//g2D.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
 				int fontSize = (int)(size2/3);
-				Color red = new Color(255,109,76);
-			    Color grey = new Color(240,240,240);
-			    g2D.setColor(grey);
-			    
+				//Color red = new Color(255,109,76);
+			    //Color grey = new Color(240,240,240);
+			    //g2D.setColor(grey);
+			    /*
 			    D_1 = new Rectangle2D.Double((int)(1.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
 			    g2D.fill(D_1);
 			    D_2 = new Rectangle2D.Double((int)(5.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
@@ -441,6 +441,8 @@ public class View extends JPanel  {
 			    else {
 			    	j = 6;
 			    }
+			    */
+				int j= 0;
 				// Unterhaltungsstunden pro Tag
 				int[] hourlyUsageEnterDay = new int[numDays*24];
 				
@@ -493,28 +495,46 @@ public class View extends JPanel  {
 				}
 				//System.out.println(hourlyUsageOrgaDay[0]);
 				
-				/*
+				// Um wie viel Punkte verschieben???
+				// Gibt immer doppelt aus? Wie break setzen????
 				// Zeichnen Punkte Unterhaltung
 				for (int i = 0; i<24; i++) {
 					g2D.setColor(java.awt.Color.green);
-					g2D.drawOval(0,hourlyUsageEnterDay[0]); // warum 4 ints bei Ausgabe 1????
-					//g2D.fillOval(); brauch ich das?
+					//drawOval(int x, int y, int width, int height)
+					g2D.drawOval(i,hourlyUsageEnterDay[i],12,12);
+					//System.out.println(i+","+hourlyUsageEnterDay[i]);
+					g2D.fillOval(i,hourlyUsageEnterDay[i],12,12);
+					//Dauert zu lange Testen auf anderem Rechner
+					/*
+					while(i>0) {
+						g2D.drawLine(i-1, hourlyUsageEnterDay[i-1], i,hourlyUsageEnterDay[i]);
+					}*/
 				}
 				
 				//Zeichnen Punkte Kommunikation
 				for (int i = 0; i<24; i++) {
 					g2D.setColor(java.awt.Color.red);
-					g2D.drawOval(0,hourlyUsageCommDay[0]); // warum 4 ints bei Ausgabe 1????
-					//g2D.fillOval(); brauch ich das?
+					g2D.drawOval(i,hourlyUsageCommDay[i],12,12); 
+					g2D.fillOval(i,hourlyUsageCommDay[i],12,12); 
+					//Dauert zu lange Testen auf anderem Rechner
+					/*
+					while(i>0) {
+						g2D.drawLine(i-1, hourlyUsageCommDay[i-1], i,hourlyUsageCommDay[i]);
+					}*/
 				}
 				
 				//Zeichnen Punkte Organisation
 				for (int i = 0; i<24; i++) {
 					g2D.setColor(java.awt.Color.blue);
-					g2D.drawOval(0,hourlyUsageOrgaDay[0]); // warum 4 ints bei Ausgabe 1????
-					//g2D.fillOval(); brauch ich das?
+					g2D.drawOval(0,hourlyUsageOrgaDay[0],12,12);
+					g2D.fillOval(0,hourlyUsageOrgaDay[0],12,12); 
+					//Dauert zu lange Testen auf anderem Rechner
+					/*
+					while(i>0) {
+						g2D.drawLine(i-1, hourlyUsageOrgaDay[i-1], i,hourlyUsageOrgaDay[i]);
+					}*/
 				}
-				*/
+				
 					
 			}
 			
