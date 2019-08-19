@@ -494,16 +494,17 @@ public class View extends JPanel  {
 					}
 				}
 				//System.out.println(hourlyUsageOrgaDay[0]);
-				
-				// Um wie viel Punkte verschieben???
+				//g2D.drawOval(46,796,8,8); // Nullpunkt
+				// Punkte an Achsenbeschriftung anpassen
 				// Gibt immer doppelt aus? Wie break setzen????
 				// Zeichnen Punkte Unterhaltung
+				
 				for (int i = 0; i<24; i++) {
 					g2D.setColor(java.awt.Color.green);
 					//drawOval(int x, int y, int width, int height)
-					g2D.drawOval(i,hourlyUsageEnterDay[i],12,12);
+					g2D.drawOval(46+i,796+hourlyUsageEnterDay[i],12,12);
 					//System.out.println(i+","+hourlyUsageEnterDay[i]);
-					g2D.fillOval(i,hourlyUsageEnterDay[i],12,12);
+					//g2D.fillOval(46+i,796+hourlyUsageEnterDay[i],12,12);
 					//Dauert zu lange Testen auf anderem Rechner
 					/*
 					while(i>0) {
@@ -512,28 +513,28 @@ public class View extends JPanel  {
 				}
 				
 				//Zeichnen Punkte Kommunikation
-				for (int i = 0; i<24; i++) {
-					g2D.setColor(java.awt.Color.red);
-					g2D.drawOval(i,hourlyUsageCommDay[i],12,12); 
-					g2D.fillOval(i,hourlyUsageCommDay[i],12,12); 
+				//for (int i = 0; i<24; i++) {
+					//g2D.setColor(java.awt.Color.red);
+					//g2D.drawOval(46+i,796+hourlyUsageCommDay[i],12,12); 
+					//g2D.fillOval(46+i,796+hourlyUsageCommDay[i],12,12); 
 					//Dauert zu lange Testen auf anderem Rechner
 					/*
 					while(i>0) {
 						g2D.drawLine(i-1, hourlyUsageCommDay[i-1], i,hourlyUsageCommDay[i]);
 					}*/
-				}
+				//}
 				
 				//Zeichnen Punkte Organisation
-				for (int i = 0; i<24; i++) {
-					g2D.setColor(java.awt.Color.blue);
-					g2D.drawOval(0,hourlyUsageOrgaDay[0],12,12);
-					g2D.fillOval(0,hourlyUsageOrgaDay[0],12,12); 
+				//for (int i = 0; i<24; i++) {
+					//g2D.setColor(java.awt.Color.blue);
+					//g2D.drawOval(46+0,796+hourlyUsageOrgaDay[0],12,12);
+					//g2D.fillOval(46+0,796+hourlyUsageOrgaDay[0],12,12); 
 					//Dauert zu lange Testen auf anderem Rechner
 					/*
 					while(i>0) {
 						g2D.drawLine(i-1, hourlyUsageOrgaDay[i-1], i,hourlyUsageOrgaDay[i]);
 					}*/
-				}
+				//}
 				
 					
 			}
