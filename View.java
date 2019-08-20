@@ -1,4 +1,4 @@
-package infovis.phoneUsage;
+package phoneUsage;
 
 import infovis.debug.Debug;
 
@@ -33,7 +33,7 @@ public class View extends JPanel  {
 	     //0=all, 1=entertainment, 2=communication, 3=organisation
 	     private int category = 0; 
 	     
-	     private int day = 0;
+	     private int days = 0;
 	     
 	     private Rectangle2D.Double R_all;
 	     private Rectangle2D.Double R_enter;
@@ -43,7 +43,7 @@ public class View extends JPanel  {
 	     private ArrayList<App> apps = new ArrayList<App>();
 	     private ArrayList<Usage> usage = new ArrayList<Usage>();
 	     
-	     private int numDays = 0;
+	     private int numDays = 1;
 	     
 	     private int[] hourlyUsage;
 	     private int[] hourlyUsageEnter;
@@ -276,7 +276,67 @@ public class View extends JPanel  {
 			
 			//Koordinatensystem Tagesübersicht
 			else if(mode == 1) {
-								
+				
+				
+				//Buttons Tageswechsel      // Überlappt sich noch mit Koordinatensystem
+				double size2 = getWidth()/28;
+				g2D.setColor(Color.WHITE);
+				g2D.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
+				int fontSize = (int)(size2/3);
+				Color red = new Color(255,109,76);
+			    Color grey = new Color(240,240,240);
+			    g2D.setColor(grey);
+			    
+			    D_1 = new Rectangle2D.Double((int)(1.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_1);
+			    D_2 = new Rectangle2D.Double((int)(5.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_2);
+			    D_3 = new Rectangle2D.Double((int)(8.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_3);
+			    D_4 = new Rectangle2D.Double((int)(12.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_4);
+			    D_5 = new Rectangle2D.Double((int)(15.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_5);
+			    D_6 = new Rectangle2D.Double((int)(19.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_6);
+			    D_7 = new Rectangle2D.Double((int)(22.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_7);
+			    
+			    g2D.setColor(red);
+			    
+			    if(days == 0) {
+			    	g2D.fill(D_1);
+			    } else if(days == 1) {
+			    	g2D.fill(D_2);
+			    } else if(days == 2) {
+			    	g2D.fill(D_3);
+			    } else if(days == 3) {
+			    	g2D.fill(D_4);
+			    } else if(days == 4) {
+			    	g2D.fill(D_5);
+			    } else if(days == 5) {
+			    	g2D.fill(D_6);
+			    } else if(days == 6) {
+			    	g2D.fill(D_7);
+			    }
+				
+				
+				
+				Font font = new Font("Sans", Font.PLAIN, fontSize);
+			    g2D.setFont(font);
+			    g2D.setColor(Color.BLACK);
+				g2D.drawString("Tag 1", (int)(2*size2), (int)(size2)); 
+				g2D.drawString("Tag 2", (int)(5.5*size2), (int)(size2));
+			    g2D.drawString("Tag 3", (int)(9*size2), (int)(size2)); 
+			    g2D.drawString("Tag 4", (int)(12.5*size2), (int)(size2)); 
+			    g2D.drawString("Tag 5", (int)(16*size2), (int)(size2));
+			    g2D.drawString("Tag 6", (int)(19.5*size2), (int)(size2));
+			    g2D.drawString("Tag 7", (int)(23*size2), (int)(size2));
+			    
+			    //g2D.translate(2*size2, 2*size2);
+				
+				
+				
 				// X-Achse Koordinaten (konstant)
 				//	Start (50,800) Ende (800,800)
 				final int xAchse_x1 = 50;
@@ -374,184 +434,144 @@ public class View extends JPanel  {
 					i+=10;
 				}
 				
-				//Buttons Tageswechsel      // Überlappt sich noch mit Koordinatensystem
-				double size2 = getWidth()/28;
-				//g2D.setColor(Color.WHITE);
-				//g2D.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
-				int fontSize = (int)(size2/3);
-				//Color red = new Color(255,109,76);
-			    //Color grey = new Color(240,240,240);
-			    //g2D.setColor(grey);
+				
+				
+				
+				
+				
 			    
-			    D_1 = new Rectangle2D.Double((int)(1.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_1);
-			    D_2 = new Rectangle2D.Double((int)(5.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_2);
-			    D_3 = new Rectangle2D.Double((int)(8.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_3);
-			    D_4 = new Rectangle2D.Double((int)(12.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_4);
-			    D_5 = new Rectangle2D.Double((int)(15.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_5);
-			    D_6 = new Rectangle2D.Double((int)(19.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_6);
-			    D_7 = new Rectangle2D.Double((int)(22.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_7);
 			    
-			    //g2D.setColor(red);
+			    int[] hourlyUsageEnterDay = new int[numDays*24];
+			    int[] hourlyUsageCommDay = new int[numDays*24];
+			    int[] hourlyUsageOrgaDay = new int[numDays*24];
 			    
-			    if(day == 0) {
-			    	g2D.fill(D_1);
-			    } else if(day == 1) {
-			    	g2D.fill(D_2);
-			    } else if(day == 2) {
-			    	g2D.fill(D_3);
-			    } else if(day == 3) {
-			    	g2D.fill(D_4);
-			    } else if(day == 4) {
-			    	g2D.fill(D_5);
-			    } else if(day == 5) {
-			    	g2D.fill(D_6);
-			    } else if(day == 6) {
-			    	g2D.fill(D_7);
-			    }
-				
-				
-				
-				Font font = new Font("Sans", Font.PLAIN, fontSize);
-			    g2D.setFont(font);
-			    g2D.setColor(Color.BLACK);
-				g2D.drawString("Tag 1", (int)(2*size2), (int)(size2)); 
-				g2D.drawString("Tag 2", (int)(5.5*size2), (int)(size2));
-			    g2D.drawString("Tag 3", (int)(9*size2), (int)(size2)); 
-			    g2D.drawString("Tag 4", (int)(12.5*size2), (int)(size2)); 
-			    g2D.drawString("Tag 5", (int)(16*size2), (int)(size2));
-			    g2D.drawString("Tag 6", (int)(19.5*size2), (int)(size2));
-			    g2D.drawString("Tag 7", (int)(23*size2), (int)(size2));
 			    
-			    //g2D.translate(2*size2, 2*size2);
-				
-				
-				
-				// START ANSICHT
-			    // Automatisches ändern des Koordinatensystems
-			    int j;
-			    if (day == 0) {
-			    	j = 0;
-			    } 
-			    else if(day == 1) {
-			    	j = 1;
-			    }
-			    else if(day == 2) {
-			    	j = 2;
-			    }
-			    else if(day == 3) {
-			    	j = 3;
-			    }
-			    else if (day == 4) {
-			    	j = 4;
-			    }
-			    else if (day == 5) {
-			    	j = 5;
-			    }
-			    else {
-			    	j = 6;
-			    }
-			    
-				/*int j = 0;
-				// Unterhaltungsstunden pro Tag
-				int[] hourlyUsageEnterDay = new int[numDays*24];
-				
-				for(int i = 0; i < hourlyUsageEnterDay.length; i++) {
-					hourlyUsageEnterDay[i] = 0;
-					for(Usage u : usage) {
-						if (u.getDay()== j) {
-							if(i == (u.getDay() * 24 + u.getHour())) {
-								if(u.getApp().getCategory() == "Unterhaltung") {
-									hourlyUsageEnterDay[i] += u.getDuration();
+			    	
+			    	// START ANSICHT
+				    // Automatisches ändern des Koordinatensystems
+			    	System.out.println(getDays());
+				    int j;
+				    if (days == 0) {
+				    	j = 0;
+				    } 
+				    else if(days == 1) {
+				    	j = 1;
+				    }
+				    else if(days == 2) {
+				    	j = 2;
+				    }
+				    else if(days == 3) {
+				    	j = 3;
+				    }
+				    else if (days == 4) {
+				    	j = 4;
+				    }
+				    else if (days == 5) {
+				    	j = 5;
+				    }
+				    else {
+				    	j = 6;
+				    }
+				    
+			    	System.out.print("j:" + j);
+			    	
+			    	//int j =1;
+			    	
+				    // Unterhaltungsstunden pro Tag
+					
+					
+					for(int i = 0; i < hourlyUsageEnterDay.length; i++) {
+						hourlyUsageEnterDay[i] = 0;
+						for(Usage u : usage) {
+							if (u.getDay()== j) {
+								if(i == (u.getDay() * 24 + u.getHour())) {
+									if(u.getApp().getCategory() == "Unterhaltung") {
+										hourlyUsageEnterDay[i] += u.getDuration();
+									}
 								}
 							}
 						}
 					}
-				}*/
-				//System.out.println(hourlyUsageEnterDay[0]);
-				
-				
-				//Kommunikationsstunden pro Tag
-				int[] hourlyUsageCommDay = new int[numDays*24];
-				
-				for(int i = 0; i < hourlyUsageCommDay.length; i++) {
-					hourlyUsageCommDay[i] = 0;
-					for(Usage u : usage) {
-						if (u.getDay()== j) {
-							if(i == (u.getDay() * 24 + u.getHour())) {
-								if(u.getApp().getCategory() == "Kommunikation") {
-									hourlyUsageCommDay[i] += u.getDuration();
+					//System.out.println(hourlyUsageEnterDay[0]);
+					
+					
+					//Kommunikationsstunden pro Tag
+					
+					for(int i = 0; i < hourlyUsageCommDay.length; i++) {
+						hourlyUsageCommDay[i] = 0;
+						for(Usage u : usage) {
+							if (u.getDay()== j) {
+								if(i == (u.getDay() * 24 + u.getHour())) {
+									if(u.getApp().getCategory() == "Kommunikation") {
+										hourlyUsageCommDay[i] += u.getDuration();
+									}
 								}
 							}
 						}
 					}
-				}
-				//System.out.println(hourlyUsageCommDay[0]);
-				
-				//Organisationsstunden pro Tag
-				int[] hourlyUsageOrgaDay = new int[numDays*24];
-				
-				for(int i = 0; i < hourlyUsageOrgaDay.length; i++) {
-					hourlyUsageOrgaDay[i] = 0;
-					for(Usage u : usage) {
-						if (u.getDay()== j) {
-							if(i == (u.getDay() * 24 + u.getHour())) {
-								if(u.getApp().getCategory() == "Organisatiorisches") {
-									hourlyUsageOrgaDay[i] += u.getDuration();
+					//System.out.println(hourlyUsageCommDay[0]);
+					
+					//Organisationsstunden pro Tag
+					
+					
+					for(int i = 0; i < hourlyUsageOrgaDay.length; i++) {
+						hourlyUsageOrgaDay[i] = 0;
+						for(Usage u : usage) {
+							if (u.getDay()== j) {
+								if(i == (u.getDay() * 24 + u.getHour())) {
+									if(u.getApp().getCategory() == "Organisatiorisches") {
+										hourlyUsageOrgaDay[i] += u.getDuration();
+									}
 								}
 							}
 						}
 					}
-				}
-				//System.out.println(hourlyUsageOrgaDay[0]);
+					//System.out.println(hourlyUsageOrgaDay[0]);
+					
+			    //}
 				//g2D.drawOval(46,796,8,8); // Nullpunkt
 				// Punkte an Achsenbeschriftung anpassen
 				// Gibt immer doppelt aus? Wie break setzen????
 				// Zeichnen Punkte Unterhaltung
+					
 				
-				/*for (int i = 0; i<24; i++) {
+				for (int i = 0; i<24; i++) {
 					g2D.setColor(java.awt.Color.green);
 					//drawOval(int x, int y, int width, int height)
-					g2D.drawOval(46+i,796+hourlyUsageEnterDay[i],12,12);
+					g2D.drawOval(xAchse_x1 + (i * xLength)-6,yAchse_y2 - (hourlyUsageEnterDay[i] * yLength)-6,12,12);
 					//System.out.println(i+","+hourlyUsageEnterDay[i]);
-					//g2D.fillOval(46+i,796+hourlyUsageEnterDay[i],12,12);
+					g2D.fillOval(xAchse_x1 + (i * xLength)-6,yAchse_y2 - (hourlyUsageEnterDay[i] * yLength)-6,12,12);
 					//Dauert zu lange Testen auf anderem Rechner
 					/*
 					while(i>0) {
-						g2D.drawLine(i-1, hourlyUsageEnterDay[i-1], i,hourlyUsageEnterDay[i]);
+						g2D.drawLine(xAchse_x1 + ((i-1) * xLength)-6, yAchse_y2 - (hourlyUsageEnterDay[i-1] * yLength)-6, xAchse_x1 + (i * xLength)-6,yAchse_y2 - (hourlyUsageEnterDay[i] * yLength)-6);
 					}
-				}*/
+					*/
+				}
 				
 				//Zeichnen Punkte Kommunikation
-				//for (int i = 0; i<24; i++) {
-					//g2D.setColor(java.awt.Color.red);
-					//g2D.drawOval(46+i,796+hourlyUsageCommDay[i],12,12); 
-					//g2D.fillOval(46+i,796+hourlyUsageCommDay[i],12,12); 
+				//g2D.setColor(java.awt.Color.red);
+					//g2D.drawOval(xAchse_x1 + (i * xLength)-6,yAchse_y2 - (hourlyUsageCommDay[i] * yLength)-6,12,12); 
+					//g2D.fillOval(xAchse_x1 + (i * xLength)-6,yAchse_y2 - (hourlyUsageCommDay[i] * yLength)-6,12,12); 
 					//Dauert zu lange Testen auf anderem Rechner
 					/*
 					while(i>0) {
-						g2D.drawLine(i-1, hourlyUsageCommDay[i-1], i,hourlyUsageCommDay[i]);
+						g2D.drawLine(xAchse_x1 + ((i-1) * xLength)-6, yAchse_y2 - (hourlyUsageCommDay[i-1] * yLength)-6, xAchse_x1 + (i * xLength)-6,yAchse_y2 - (hourlyUsageCommDay[i] * yLength)-6);
 					}*/
 				//}
 				
 				//Zeichnen Punkte Organisation
 				//for (int i = 0; i<24; i++) {
 					//g2D.setColor(java.awt.Color.blue);
-					//g2D.drawOval(46+0,796+hourlyUsageOrgaDay[0],12,12);
-					//g2D.fillOval(46+0,796+hourlyUsageOrgaDay[0],12,12); 
+					//g2D.drawOval(xAchse_x1 + (i * xLength)-6,yAchse_y2 - (hourlyUsageOrgaDay[i] * yLength)-6,12,12);
+					//g2D.fillOval(xAchse_x1 + (i * xLength)-6,yAchse_y2 - (hourlyUsageOrgaDay[i] * yLength)-6,12,12); 
 					//Dauert zu lange Testen auf anderem Rechner
 					/*
 					while(i>0) {
-						g2D.drawLine(i-1, hourlyUsageOrgaDay[i-1], i,hourlyUsageOrgaDay[i]);
+						g2D.drawLine(xAchse_x1 + ((i-1) * xLength)-6, yAchse_y2 - (hourlyUsageOrgaDay[i-1] * yLength)-6,xAchse_x1 + (i * xLength)-6,yAchse_y2 - (hourlyUsageOrgaDay[i] * yLength)-6);
 					}*/
 				//}
-				
+					
 					
 			}
 
@@ -781,6 +801,14 @@ public class View extends JPanel  {
 		
 		public void setCategory(int cat) {
 			this.category = cat;
+		}
+		
+		public int getDays() {
+			return days;
+		}
+		
+		public void setDays(int d) {
+			this.days = d;
 		}
 		
 		public int getMode() {

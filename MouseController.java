@@ -1,4 +1,4 @@
-package infovis.phoneUsage;
+package phoneUsage;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -46,19 +46,19 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			Rectangle2D.Double D_7 = view.getD_7();
 			
 			if(D_1.contains(x,y)) {
-				view.setCategory(4);
+				view.setDays(0);
 			} else if(D_2.contains(x,y)) {
-				view.setCategory(5);
+				view.setDays(1);
 			} else if(D_3.contains(x,y)) {
-				view.setCategory(6);
+				view.setDays(2);
 			} else if(D_4.contains(x,y)) {
-				view.setCategory(7);
+				view.setDays(3);
 			} else if(D_5.contains(x,y)) {
-				view.setCategory(8);
+				view.setDays(4);
 			} else if(D_6.contains(x,y)) {
-				view.setCategory(9);
+				view.setDays(5);
 			} else if(D_7.contains(x,y)) {
-				view.setCategory(10);
+				view.setDays(6);
 			}
 			view.repaint();
 		} else if(view.getMode() == 2) {
