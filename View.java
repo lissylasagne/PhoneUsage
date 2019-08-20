@@ -33,6 +33,8 @@ public class View extends JPanel  {
 	     //0=all, 1=entertainment, 2=communication, 3=organisation
 	     private int category = 0; 
 	     
+	     private int day = 0;
+	     
 	     private Rectangle2D.Double R_all;
 	     private Rectangle2D.Double R_enter;
 	     private Rectangle2D.Double R_comm;
@@ -398,19 +400,19 @@ public class View extends JPanel  {
 			    
 			    //g2D.setColor(red);
 			    
-			    if(category == 4) {
+			    if(day == 0) {
 			    	g2D.fill(D_1);
-			    } else if(category == 5) {
+			    } else if(day == 1) {
 			    	g2D.fill(D_2);
-			    } else if(category == 6) {
+			    } else if(day == 2) {
 			    	g2D.fill(D_3);
-			    } else if(category == 7) {
+			    } else if(day == 3) {
 			    	g2D.fill(D_4);
-			    } else if(category == 8) {
+			    } else if(day == 4) {
 			    	g2D.fill(D_5);
-			    } else if(category == 9) {
+			    } else if(day == 5) {
 			    	g2D.fill(D_6);
-			    } else if(category == 10) {
+			    } else if(day == 6) {
 			    	g2D.fill(D_7);
 			    }
 				
@@ -434,22 +436,22 @@ public class View extends JPanel  {
 				// START ANSICHT
 			    // Automatisches ändern des Koordinatensystems
 			    int j;
-			    if (category == 4) {
+			    if (day == 0) {
 			    	j = 0;
 			    } 
-			    else if(category == 5) {
+			    else if(day == 1) {
 			    	j = 1;
 			    }
-			    else if(category == 6) {
+			    else if(day == 2) {
 			    	j = 2;
 			    }
-			    else if(category == 7) {
+			    else if(day == 3) {
 			    	j = 3;
 			    }
-			    else if (category == 8) {
+			    else if (day == 4) {
 			    	j = 4;
 			    }
-			    else if (category == 9) {
+			    else if (day == 5) {
 			    	j = 5;
 			    }
 			    else {

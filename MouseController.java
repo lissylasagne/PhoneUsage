@@ -35,12 +35,8 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			}
 			
 			view.repaint();
-		} else if(view.getMode() == 1) {
-			/*Rectangle2D.Double R_all = view.getR_all();
-			Rectangle2D.Double R_enter = view.getR_enter();
-			Rectangle2D.Double R_comm = view.getR_comm();
-			Rectangle2D.Double R_orga = view.getR_orga();*/
-			
+		
+		} else if(view.getMode() == 1) {		
 			Rectangle2D.Double D_1 = view.getD_1();
 			Rectangle2D.Double D_2 = view.getD_2();
 			Rectangle2D.Double D_3 = view.getD_3();
@@ -49,15 +45,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			Rectangle2D.Double D_6 = view.getD_6();
 			Rectangle2D.Double D_7 = view.getD_7();
 			
-			/*if(R_all.contains(x,y)) {
-				view.setCategory(0);
-			} else if(R_enter.contains(x,y)) {
-				view.setCategory(1);
-			} else if(R_comm.contains(x,y)) {
-				view.setCategory(2);
-			} else if(R_orga.contains(x,y)) {
-				view.setCategory(3);
-			} else */if(D_1.contains(x,y)) {
+			if(D_1.contains(x,y)) {
 				view.setCategory(4);
 			} else if(D_2.contains(x,y)) {
 				view.setCategory(5);
