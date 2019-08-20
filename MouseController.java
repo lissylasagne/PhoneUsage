@@ -1,4 +1,4 @@
-package phoneUsage;
+package infovis.phoneUsage;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -15,10 +15,10 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	private int x,y = 0;
 
 	public void mouseClicked(MouseEvent arg0) {
+		x = arg0.getX();
+		y = arg0.getY();
+		
 		if(view.getMode() == 0) {
-			x = arg0.getX();
-			y = arg0.getY();
-			
 			Rectangle2D.Double R_all = view.getR_all();
 			Rectangle2D.Double R_enter = view.getR_enter();
 			Rectangle2D.Double R_comm = view.getR_comm();
@@ -35,15 +35,12 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			}
 			
 			view.repaint();
-		
-		else if(view.getMode() == 1) {
-			x = arg0.getX();
-			y = arg0.getY();
-			
-			Rectangle2D.Double R_all = view.getR_all();
+		} else if(view.getMode() == 1) {
+			/*Rectangle2D.Double R_all = view.getR_all();
 			Rectangle2D.Double R_enter = view.getR_enter();
 			Rectangle2D.Double R_comm = view.getR_comm();
-			Rectangle2D.Double R_orga = view.getR_orga();
+			Rectangle2D.Double R_orga = view.getR_orga();*/
+			
 			Rectangle2D.Double D_1 = view.getD_1();
 			Rectangle2D.Double D_2 = view.getD_2();
 			Rectangle2D.Double D_3 = view.getD_3();
@@ -52,7 +49,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			Rectangle2D.Double D_6 = view.getD_6();
 			Rectangle2D.Double D_7 = view.getD_7();
 			
-			if(R_all.contains(x,y)) {
+			/*if(R_all.contains(x,y)) {
 				view.setCategory(0);
 			} else if(R_enter.contains(x,y)) {
 				view.setCategory(1);
@@ -60,7 +57,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				view.setCategory(2);
 			} else if(R_orga.contains(x,y)) {
 				view.setCategory(3);
-			} else if(D_1.contains(x,y)) {
+			} else */if(D_1.contains(x,y)) {
 				view.setCategory(4);
 			} else if(D_2.contains(x,y)) {
 				view.setCategory(5);
@@ -74,6 +71,44 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				view.setCategory(9);
 			} else if(D_7.contains(x,y)) {
 				view.setCategory(10);
+			}
+			view.repaint();
+		} else if(view.getMode() == 2) {
+			if(view.getCategory() == 0) {
+				for(int i = 0; i < view.getPieChart().length; i++) {
+					if(view.getPieChart(i).contains(x,y)) {
+						view.setCategory(i+1);
+						view.repaint();
+					}
+				}
+			} else if(view.getCategory() == 1 || view.getCategory() == 2 || view.getCategory() == 3) {
+				String cat = "";
+				int total = 0;
+				switch(view.getCategory()) {
+					case 1:
+						cat = "Unterhaltung";
+						break;
+					case 2:
+						cat = "Kommunikation";
+						break;
+					case 3:
+						cat = "Organisatorisches";
+						break;
+				}
+				
+				for(int i = 0; i < view.getPieChart().length; i++) {
+					if(view.getPieChart(i).contains(x,y)) {
+						view.setChosenArc(view.getPieChart(i));
+						view.repaint();
+						break;
+					} else {
+						if(i == view.getPieChart().length-1) {
+							view.setCategory(0);
+							view.setChosenArc(null);
+							view.repaint();
+						}
+					}
+				}
 			}
 		}
 	}
