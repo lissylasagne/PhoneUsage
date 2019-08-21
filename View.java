@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Arc2D;
@@ -35,6 +36,12 @@ public class View extends JPanel  {
 	     
 	     private int days = 0;
 	     
+	     //for zoom
+	     private double zoom = 1.0;
+	     //private int zoomCounter = 0;
+	     double zoomPercentage = 13.0;
+	     private double percentage = zoomPercentage / 100;
+	     
 	     private Rectangle2D.Double R_all;
 	     private Rectangle2D.Double R_enter;
 	     private Rectangle2D.Double R_comm;
@@ -61,6 +68,13 @@ public class View extends JPanel  {
 	     private Rectangle2D.Double D_5;
 	     private Rectangle2D.Double D_6;
 	     private Rectangle2D.Double D_7;
+	     private Rectangle2D.Double Zoom_1;
+	     private Rectangle2D.Double Zoom_2;
+	     private Rectangle2D.Double Zoom_3;
+	     private Rectangle2D.Double Zoom_4;
+	     private Rectangle2D.Double Zoom_5;
+	     private Rectangle2D.Double Zoom_6;
+	     
 	     
 	     //for mode 2
 	     private Arc2D[] pieChart; 
@@ -72,6 +86,9 @@ public class View extends JPanel  {
 			graphics = g2D;
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.clearRect(0, 0, getWidth(), getHeight());
+			// for Zoom
+			g2D.scale(zoom, zoom);
+		    
 			
 			//counter so it doesnt run twice
 			if(counter == 0) {
@@ -302,6 +319,8 @@ public class View extends JPanel  {
 			    D_7 = new Rectangle2D.Double((int)(22.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
 			    g2D.fill(D_7);
 			    
+			   
+			    
 			    g2D.setColor(red);
 			    
 			    if(days == 0) {
@@ -434,7 +453,23 @@ public class View extends JPanel  {
 					i+=10;
 				}
 				
+				//for zoom
+				//zooming sections
+				Color x = new Color(255,109,76,0); // invisible
+				g2D.setColor(x);
 				
+			    Zoom_1 = new Rectangle2D.Double((int)(xAchse_x1 + (0 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_1);
+				Zoom_2 = new Rectangle2D.Double((int)(xAchse_x1 + (4 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_2);
+				Zoom_3 = new Rectangle2D.Double((int)(xAchse_x1 + (8 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_3);
+				Zoom_4 = new Rectangle2D.Double((int)(xAchse_x1 + (12 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_4);
+				Zoom_5 = new Rectangle2D.Double((int)(xAchse_x1 + (16 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_5);
+				Zoom_6 = new Rectangle2D.Double((int)(xAchse_x1 + (20 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_6);
 				
 				
 				
@@ -572,6 +607,12 @@ public class View extends JPanel  {
 					}*/
 				//}
 					
+				
+				//zoom
+				//--> Koordinatensystem in Rechtecke unterteilen(nicht sichtbar) wenn klick zoomfunktion aufruf
+				//Zoomfunktion: durch scaling --> Fenstergröße auf größe des Rechteckes
+				
+				
 					
 			}
 
@@ -795,6 +836,31 @@ public class View extends JPanel  {
 			return D_7;
 		}
 		
+		public Rectangle2D.Double getZoom_1() {
+			return Zoom_1;
+		}
+		
+		public Rectangle2D.Double getZoom_2() {
+			return Zoom_2;
+		}
+		
+		public Rectangle2D.Double getZoom_3() {
+			return Zoom_3;
+		}
+		
+		public Rectangle2D.Double getZoom_4() {
+			return Zoom_4;
+		}
+		
+		public Rectangle2D.Double getZoom_5() {
+			return Zoom_5;
+		}
+		
+		public Rectangle2D.Double getZoom_6() {
+			return Zoom_6;
+		}
+		
+		
 		public int getCategory() {
 			return category;
 		}
@@ -839,4 +905,33 @@ public class View extends JPanel  {
 		public void setChosenArc(Arc2D arc) {
 			this.chosenArc = arc;
 		}
+		
+		// hier nochmal schauen
+		// besser wenn man direkt Koordinaten des gewünschten Sichtfeldes eingeben kann
+		
+		public void setZoomPercentage(int zoomPercentage) {
+		    percentage = ((double) zoomPercentage) / 100;
+		  }
+
+		  public void originalSize() {
+		    zoom = 1;
+		  }
+
+		  public void zoomIn() {
+		    zoom += percentage;
+		  }
+
+		  public void zoomOut() {
+		    zoom -= percentage;
+
+		    if (zoom < percentage) {
+		      if (percentage > 1.0) {
+		        zoom = 1.0;
+		      } else {
+		        zoomIn();
+		      }
+		    }
+		  }
+		  
+		  
 }

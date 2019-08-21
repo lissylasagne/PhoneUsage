@@ -44,6 +44,12 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			Rectangle2D.Double D_5 = view.getD_5();
 			Rectangle2D.Double D_6 = view.getD_6();
 			Rectangle2D.Double D_7 = view.getD_7();
+			Rectangle2D.Double Zoom_1 = view.getZoom_1();
+			Rectangle2D.Double Zoom_2 = view.getZoom_2();
+			Rectangle2D.Double Zoom_3 = view.getZoom_3();
+			Rectangle2D.Double Zoom_4 = view.getZoom_4();
+			Rectangle2D.Double Zoom_5 = view.getZoom_5();
+			Rectangle2D.Double Zoom_6 = view.getZoom_6();
 			
 			if(D_1.contains(x,y)) {
 				view.setDays(0);
@@ -60,6 +66,45 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			} else if(D_7.contains(x,y)) {
 				view.setDays(6);
 			}
+			//Braucht zu lange an anderen PC ausprobieren
+			for(int i = 0; i<8;i++) {
+				while(i<4) {
+					if(Zoom_1.contains(x,y)) {
+						view.zoomIn();
+					} /*else if(Zoom_2.contains(x,y)) {
+						view.zoomIn();
+					} else if(Zoom_3.contains(x,y)) {
+						view.zoomIn();
+					} else if(Zoom_4.contains(x,y)) {
+						view.zoomIn();
+					} else if(Zoom_5.contains(x,y)) {
+						view.zoomIn();
+					}else if(Zoom_6.contains(x,y)) {
+						view.zoomIn();
+					}*/
+					i++;
+				}
+				while(i>3 && i<7)
+					if(Zoom_1.contains(x,y)) {
+						view.zoomIn();
+					} /*else if(Zoom_2.contains(x,y)) {
+						view.zoomOut();
+					} else if(Zoom_3.contains(x,y)) {
+						view.zoomOut();
+					} else if(Zoom_4.contains(x,y)) {
+						view.zoomOut();
+					} else if(Zoom_5.contains(x,y)) {
+						view.zoomOut();
+					}else if(Zoom_6.contains(x,y)) {
+						view.zoomOut();
+					}*/
+					i++;
+				if(i== 7) {
+					i=0;
+				}
+				
+			}
+			 
 			view.repaint();
 		} else if(view.getMode() == 2) {
 			if(view.getCategory() == 0) {
