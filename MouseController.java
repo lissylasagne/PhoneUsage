@@ -13,6 +13,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	private Model model = null;
 	private View view = null;
 	private int x,y = 0;
+	private int zoomCounter = 0;
 
 	public void mouseClicked(MouseEvent arg0) {
 		x = arg0.getX();
@@ -67,11 +68,11 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				view.setDays(6);
 			}
 			//Braucht zu lange an anderen PC ausprobieren
-			for(int i = 0; i<8;i++) {
-				while(i<4) {
+				if(zoomCounter<3) {
 					if(Zoom_1.contains(x,y)) {
 						view.zoomIn();
-					} /*else if(Zoom_2.contains(x,y)) {
+						
+					}else if(Zoom_2.contains(x,y)) {
 						view.zoomIn();
 					} else if(Zoom_3.contains(x,y)) {
 						view.zoomIn();
@@ -81,13 +82,15 @@ public class MouseController implements MouseListener, MouseMotionListener {
 						view.zoomIn();
 					}else if(Zoom_6.contains(x,y)) {
 						view.zoomIn();
-					}*/
-					i++;
+					}
+					zoomCounter++;
+					
 				}
-				while(i>3 && i<7)
+				else if(zoomCounter>2 && zoomCounter<6) {
 					if(Zoom_1.contains(x,y)) {
-						view.zoomIn();
-					} /*else if(Zoom_2.contains(x,y)) {
+						view.zoomOut();
+						
+					} else if(Zoom_2.contains(x,y)) {
 						view.zoomOut();
 					} else if(Zoom_3.contains(x,y)) {
 						view.zoomOut();
@@ -97,13 +100,15 @@ public class MouseController implements MouseListener, MouseMotionListener {
 						view.zoomOut();
 					}else if(Zoom_6.contains(x,y)) {
 						view.zoomOut();
-					}*/
-					i++;
-				if(i== 7) {
-					i=0;
+					}
+					zoomCounter++;
+				}
+					
+				 if(zoomCounter== 6) {
+					zoomCounter=0;
 				}
 				
-			}
+			
 			 
 			view.repaint();
 		} else if(view.getMode() == 2) {
