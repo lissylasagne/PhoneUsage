@@ -1,23 +1,25 @@
 package phoneUsage;
 
 import java.awt.Color;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 
 import infovis.debug.Debug;
 
-public class MouseController implements MouseListener, MouseMotionListener {
+public class MouseController implements MouseListener, MouseMotionListener,MouseWheelListener {
 
 	private Model model = null;
 	private View view = null;
 	private int x,y = 0;
 	private int zoomCounter = 0;
+	
+	
 
 	public void mouseClicked(MouseEvent arg0) {
 		x = arg0.getX();
 		y = arg0.getY();
+		
+		
 		
 		if(view.getMode() == 0) {
 			Rectangle2D.Double R_all = view.getR_all();
@@ -67,6 +69,7 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			} else if(D_7.contains(x,y)) {
 				view.setDays(6);
 			}
+			//zooming per klick
 			//Braucht zu lange an anderen PC ausprobieren
 				if(zoomCounter<3) {
 					if(Zoom_1.contains(x,y)) {
@@ -162,8 +165,23 @@ public class MouseController implements MouseListener, MouseMotionListener {
 
 	public void mouseReleased(MouseEvent arg0) {
 	}
-
+	//for zooming per mausrad 
 	public void mouseDragged(MouseEvent arg0) {
+		// new x and y are defined by current mouse location subtracted
+					// by previously processed mouse location
+					int newX = arg0.getX() - x;
+					int newY = arg0.getY() - y;
+		 
+					// increment last offset to last processed by drag event.
+					x += newX;
+					y += newY;
+		 
+					// update the canvas locations
+					view.translateX += newX;
+					view.translateY += newY;
+					
+					// schedule a repaint.
+					view.repaint();
 	}
 
 	public void mouseMoved(MouseEvent arg0) {		
@@ -175,6 +193,21 @@ public class MouseController implements MouseListener, MouseMotionListener {
 
 	public void setView(View view) {
 		this.view  = view;
+	}
+
+	@Override // zooming per mausrad
+	public void mouseWheelMoved(MouseWheelEvent arg0) {
+		if(arg0.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+			
+			// make it a reasonable amount of zoom
+			// .1 gives a nice slow transition
+			view.scale += (.1 * arg0.getWheelRotation());
+			// don't cross negative threshold.
+			// also, setting scale to 0 has bad effects
+			view.scale = Math.max(0.00001, view.scale); 
+			view.repaint();
+		}
+		
 	}
 
 }
