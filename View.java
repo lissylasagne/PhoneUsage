@@ -37,13 +37,13 @@ public class View extends JPanel  {
 	     
 	     private int days = 0;
 	     
-	     //for zoom
+	     //for zooming per Klick
 	     private double zoom = 1.0;
 	     //private int zoomCounter = 0;
 	     double zoomPercentage = 80.0; // ca. immer 6 stunden reingezoomt
 	     private double percentage = zoomPercentage / 100;
 	     
-	     //test zooming arten
+	     //für zooming per Mausrad
 	     //double translateX;
 	     //double translateY;
 	     //double scale;
@@ -88,7 +88,8 @@ public class View extends JPanel  {
 		 
 		@Override
 		public void paint(Graphics g) {	
-			//zooming test for mausrad
+			
+			//für zooming per Mausrad
 			//AffineTransform tx = new AffineTransform();
 			//tx.translate(translateX, translateY);
 			//tx.scale(scale, scale);
@@ -98,10 +99,10 @@ public class View extends JPanel  {
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.clearRect(0, 0, getWidth(), getHeight());
 			
-			// for Zoom per klick
+			// für zooming per Klick
 			g2D.scale(zoom, zoom);
 			
-			//test zooming per mausrad
+			//für zooming per Mausrad
 			//g2D.setTransform(tx);
 			//translateX = 0;
 			//translateY = 0;
@@ -609,7 +610,8 @@ public class View extends JPanel  {
 //------------------------------------Punktzeichnung Kommunikation----------------------------------------------------------------------------------------------------			
 				if(days == 0) {
 					for(int i = 0;i<24;i++) {
-						g2D.setColor(java.awt.Color.blue);
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
@@ -623,7 +625,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 1) {
 					for(int i = 24;i<48;i++) {
-						g2D.setColor(java.awt.Color.blue);
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
@@ -637,7 +640,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 2) {
 					for(int i = 48;i<72;i++) {
-						g2D.setColor(java.awt.Color.blue);
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
@@ -651,7 +655,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 3) {
 					for(int i = 72;i<96;i++) {
-						g2D.setColor(java.awt.Color.blue);
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
@@ -665,7 +670,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 4) {
 					for(int i = 96;i<120;i++) {
-						g2D.setColor(java.awt.Color.blue);
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
@@ -679,7 +685,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 5) {
 					for(int i = 120;i<144;i++) {
-						g2D.setColor(java.awt.Color.blue);
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
@@ -693,7 +700,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 6) {
 					for(int i = 144;i<168;i++) {
-						g2D.setColor(java.awt.Color.blue);
+						Color c = new Color(0,255,255,250);//türkis
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
@@ -706,10 +714,11 @@ public class View extends JPanel  {
 					}
 				}
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------			
-				//------------------------------------Punktzeichnung Organisation----------------------------------------------------------------------------------------------------			
+//------------------------------------Punktzeichnung Organisation----------------------------------------------------------------------------------------------------			
 				if(days == 0) {
 					for(int i = 0;i<24;i++) {
-						g2D.setColor(java.awt.Color.red);
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
@@ -723,7 +732,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 1) {
 					for(int i = 24;i<48;i++) {
-						g2D.setColor(java.awt.Color.red);
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
@@ -737,7 +747,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 2) {
 					for(int i = 48;i<72;i++) {
-						g2D.setColor(java.awt.Color.red);
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
@@ -751,7 +762,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 3) {
 					for(int i = 72;i<96;i++) {
-						g2D.setColor(java.awt.Color.red);
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
@@ -765,7 +777,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 4) {
 					for(int i = 96;i<120;i++) {
-						g2D.setColor(java.awt.Color.red);
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
@@ -779,7 +792,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 5) {
 					for(int i = 120;i<144;i++) {
-						g2D.setColor(java.awt.Color.red);
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
@@ -793,7 +807,8 @@ public class View extends JPanel  {
 				}
 				else if(days == 6) {
 					for(int i = 144;i<168;i++) {
-						g2D.setColor(java.awt.Color.red);
+						Color c = new Color(255, 0, 0,150);//pink
+						g2D.setColor(c);
 						//drawOval(int x, int y, int width, int height)
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
@@ -806,16 +821,7 @@ public class View extends JPanel  {
 					}
 				}
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------			
-								
 				
-				
-				
-				//zoom
-				//--> Koordinatensystem in Rechtecke unterteilen(nicht sichtbar) wenn klick zoomfunktion aufruf
-				//Zoomfunktion: durch scaling --> Fenstergröße auf größe des Rechteckes
-				
-				
-					
 			}
 
 			//pie chart
@@ -1038,6 +1044,7 @@ public class View extends JPanel  {
 			return D_7;
 		}
 		
+		//Rechtecke für Zoom
 		public Rectangle2D.Double getZoom_1() {
 			return Zoom_1;
 		}
@@ -1108,9 +1115,8 @@ public class View extends JPanel  {
 			this.chosenArc = arc;
 		}
 		
-		// hier nochmal schauen
-		// besser wenn man direkt Koordinaten des gewünschten Sichtfeldes eingeben kann
 		
+		//Zoomfunktionen
 		public void setZoomPercentage(int zoomPercentage) {
 		    percentage = ((double) zoomPercentage) / 100;
 		  }

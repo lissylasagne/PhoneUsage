@@ -70,7 +70,7 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 				view.setDays(6);
 			}
 			//zooming per klick
-			//Braucht zu lange an anderen PC ausprobieren
+			//Koordinatensystem unterteilt in rechtecke a 4 stunden zoomen falls klick
 				if(zoomCounter<3) {
 					if(Zoom_1.contains(x,y)) {
 						view.zoomIn();
