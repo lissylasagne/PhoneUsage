@@ -40,13 +40,13 @@ public class View extends JPanel  {
 	     //for zoom
 	     private double zoom = 1.0;
 	     //private int zoomCounter = 0;
-	     double zoomPercentage = 13.0;
+	     double zoomPercentage = 80.0; // ca. immer 6 stunden reingezoomt
 	     private double percentage = zoomPercentage / 100;
 	     
 	     //test zooming arten
-	     double translateX;
-	     double translateY;
-	     double scale;
+	     //double translateX;
+	     //double translateY;
+	     //double scale;
 	     
 	     private Rectangle2D.Double R_all;
 	     private Rectangle2D.Double R_enter;
@@ -89,9 +89,9 @@ public class View extends JPanel  {
 		@Override
 		public void paint(Graphics g) {	
 			//zooming test for mausrad
-			AffineTransform tx = new AffineTransform();
-			tx.translate(translateX, translateY);
-			tx.scale(scale, scale);
+			//AffineTransform tx = new AffineTransform();
+			//tx.translate(translateX, translateY);
+			//tx.scale(scale, scale);
 			
 			Graphics2D g2D = (Graphics2D) g;
 			graphics = g2D;
@@ -99,15 +99,15 @@ public class View extends JPanel  {
 			g2D.clearRect(0, 0, getWidth(), getHeight());
 			
 			// for Zoom per klick
-			//g2D.scale(zoom, zoom);
+			g2D.scale(zoom, zoom);
 			
 			//test zooming per mausrad
-			g2D.setTransform(tx);
-			translateX = 0;
-			translateY = 0;
-			scale = 1;
-			setOpaque(true);
-			setDoubleBuffered(true);
+			//g2D.setTransform(tx);
+			//translateX = 0;
+			//translateY = 0;
+			//scale = 1;
+			//setOpaque(true);
+			//setDoubleBuffered(true);
 		    
 			
 			//counter so it doesnt run twice
@@ -614,7 +614,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>0) {
 							System.out.println(i);
@@ -629,7 +628,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>24) {
 							System.out.println(i);
@@ -644,7 +642,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>48) {
 							System.out.println(i);
@@ -659,7 +656,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>72) {
 							System.out.println(i);
@@ -674,7 +670,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>96) {
 							System.out.println(i);
@@ -689,7 +684,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>120) {
 							System.out.println(i);
@@ -704,7 +698,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
 						System.out.println((i%24)+","+hourlyUsageComm[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>144) {
 							System.out.println(i);
@@ -721,7 +714,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>0) {
 							System.out.println(i);
@@ -736,7 +728,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>24) {
 							System.out.println(i);
@@ -751,7 +742,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>48) {
 							System.out.println(i);
@@ -766,7 +756,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>72) {
 							System.out.println(i);
@@ -781,7 +770,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>96) {
 							System.out.println(i);
@@ -796,7 +784,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>120) {
 							System.out.println(i);
@@ -811,7 +798,6 @@ public class View extends JPanel  {
 						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
 						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
 						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
-						//Dauert zu lange Testen auf anderem Rechner
 						
 						if(i>144) {
 							System.out.println(i);

@@ -167,7 +167,7 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 	}
 	//for zooming per mausrad 
 	public void mouseDragged(MouseEvent arg0) {
-		// new x and y are defined by current mouse location subtracted
+		/*// new x and y are defined by current mouse location subtracted
 					// by previously processed mouse location
 					int newX = arg0.getX() - x;
 					int newY = arg0.getY() - y;
@@ -181,7 +181,7 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 					view.translateY += newY;
 					
 					// schedule a repaint.
-					view.repaint();
+					view.repaint();*/
 	}
 
 	public void mouseMoved(MouseEvent arg0) {		
@@ -197,7 +197,7 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 
 	@Override // zooming per mausrad
 	public void mouseWheelMoved(MouseWheelEvent arg0) {
-		if(arg0.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+		/*if(arg0.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
 			
 			// make it a reasonable amount of zoom
 			// .1 gives a nice slow transition
@@ -207,7 +207,7 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 			view.scale = Math.max(0.00001, view.scale); 
 			view.repaint();
 		}
-		
+	*/	
 	}
 
 }
