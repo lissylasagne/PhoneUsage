@@ -1,4 +1,4 @@
-package infovis.phoneUsage;
+package phoneUsage;
 
 public class Range {
 	private double min;

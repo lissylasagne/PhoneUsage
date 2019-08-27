@@ -1,12 +1,14 @@
-package infovis.phoneUsage;
+package phoneUsage;
 
 import infovis.debug.Debug;
+import java.awt.geom.AffineTransform;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Arc2D;
@@ -36,7 +38,18 @@ public class View extends JPanel  {
 	     //0=all, 1=entertainment, 2=communication, 3=organisation
 	     private int category = 0; 
 	     
-	     private int day = 0;
+	     private int days = 0;
+	     
+	     //for zooming per Klick
+	     private double zoom = 1.0;
+	     //private int zoomCounter = 0;
+	     double zoomPercentage = 80.0; // ca. immer 6 stunden reingezoomt
+	     private double percentage = zoomPercentage / 100;
+	     
+	     //für zooming per Mausrad
+	     //double translateX;
+	     //double translateY;
+	     //double scale;
 	     
 	     //buttons for choosing cateory
 	     private Rectangle2D.Double R_all;
@@ -48,8 +61,7 @@ public class View extends JPanel  {
 	     private ArrayList<App> apps = new ArrayList<App>();
 	     private ArrayList<Usage> usage = new ArrayList<Usage>();
 	     
-	     //number of listed days
-	     private int numDays = 0;
+	     private int numDays = 1;
 	     
 	     //hourly usage sorted by category
 	     private int[] hourlyUsage;
@@ -71,13 +83,43 @@ public class View extends JPanel  {
 	     private Rectangle2D.Double D_5;
 	     private Rectangle2D.Double D_6;
 	     private Rectangle2D.Double D_7;
+
+	     private Rectangle2D.Double Zoom_1;
+	     private Rectangle2D.Double Zoom_2;
+	     private Rectangle2D.Double Zoom_3;
+	     private Rectangle2D.Double Zoom_4;
+	     private Rectangle2D.Double Zoom_5;
+	     private Rectangle2D.Double Zoom_6;
+	     
+	     
+	     //for mode 2
+	     private Arc2D[] pieChart; 
+	     private Arc2D chosenArc;
 		 
 		@Override
 		public void paint(Graphics g) {	
+			
+			//für zooming per Mausrad
+			//AffineTransform tx = new AffineTransform();
+			//tx.translate(translateX, translateY);
+			//tx.scale(scale, scale);
+			
 			Graphics2D g2D = (Graphics2D) g;
 			graphics = g2D;
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.clearRect(0, 0, getWidth(), getHeight());
+			
+			// für zooming per Klick
+			g2D.scale(zoom, zoom);
+			
+			//für zooming per Mausrad
+			//g2D.setTransform(tx);
+			//translateX = 0;
+			//translateY = 0;
+			//scale = 1;
+			//setOpaque(true);
+			//setDoubleBuffered(true);
+		    
 			
 			//counter so it doesnt run twice
 			if(counter == 0) {
@@ -354,7 +396,69 @@ public class View extends JPanel  {
 			
 			//Koordinatensystem Tagesübersicht
 			else if(mode == 1) {
-								
+				
+				
+				//Buttons Tageswechsel      // Überlappt sich noch mit Koordinatensystem
+				double size2 = getWidth()/28;
+				g2D.setColor(Color.WHITE);
+				g2D.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
+				int fontSize = (int)(size2/3);
+				Color red = new Color(255,109,76);
+			    Color grey = new Color(240,240,240);
+			    g2D.setColor(grey);
+			    
+			    D_1 = new Rectangle2D.Double((int)(1.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_1);
+			    D_2 = new Rectangle2D.Double((int)(5.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_2);
+			    D_3 = new Rectangle2D.Double((int)(8.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_3);
+			    D_4 = new Rectangle2D.Double((int)(12.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_4);
+			    D_5 = new Rectangle2D.Double((int)(15.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_5);
+			    D_6 = new Rectangle2D.Double((int)(19.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_6);
+			    D_7 = new Rectangle2D.Double((int)(22.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    g2D.fill(D_7);
+			    
+			   
+			    
+			    g2D.setColor(red);
+			    
+			    if(days == 0) {
+			    	g2D.fill(D_1);
+			    } else if(days == 1) {
+			    	g2D.fill(D_2);
+			    } else if(days == 2) {
+			    	g2D.fill(D_3);
+			    } else if(days == 3) {
+			    	g2D.fill(D_4);
+			    } else if(days == 4) {
+			    	g2D.fill(D_5);
+			    } else if(days == 5) {
+			    	g2D.fill(D_6);
+			    } else if(days == 6) {
+			    	g2D.fill(D_7);
+			    }
+				
+				
+				
+				Font font = new Font("Sans", Font.PLAIN, fontSize);
+			    g2D.setFont(font);
+			    g2D.setColor(Color.BLACK);
+				g2D.drawString("Tag 1", (int)(2*size2), (int)(size2)); 
+				g2D.drawString("Tag 2", (int)(5.5*size2), (int)(size2));
+			    g2D.drawString("Tag 3", (int)(9*size2), (int)(size2)); 
+			    g2D.drawString("Tag 4", (int)(12.5*size2), (int)(size2)); 
+			    g2D.drawString("Tag 5", (int)(16*size2), (int)(size2));
+			    g2D.drawString("Tag 6", (int)(19.5*size2), (int)(size2));
+			    g2D.drawString("Tag 7", (int)(23*size2), (int)(size2));
+			    
+			    //g2D.translate(2*size2, 2*size2);
+				
+				
+				
 				// X-Achse Koordinaten (konstant)
 				//	Start (50,800) Ende (800,800)
 				final int xAchse_x1 = 50;
@@ -452,185 +556,354 @@ public class View extends JPanel  {
 					i+=10;
 				}
 				
-				//Buttons Tageswechsel      // Überlappt sich noch mit Koordinatensystem
-				double size2 = getWidth()/28;
-				//g2D.setColor(Color.WHITE);
-				//g2D.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
-				int fontSize = (int)(size2/3);
-				//Color red = new Color(255,109,76);
-			    //Color grey = new Color(240,240,240);
-			    //g2D.setColor(grey);
-			    
-			    D_1 = new Rectangle2D.Double((int)(1.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_1);
-			    D_2 = new Rectangle2D.Double((int)(5.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_2);
-			    D_3 = new Rectangle2D.Double((int)(8.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_3);
-			    D_4 = new Rectangle2D.Double((int)(12.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_4);
-			    D_5 = new Rectangle2D.Double((int)(15.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_5);
-			    D_6 = new Rectangle2D.Double((int)(19.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_6);
-			    D_7 = new Rectangle2D.Double((int)(22.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
-			    g2D.fill(D_7);
-			    
-			    //g2D.setColor(red);
-			    
-			    if(day == 0) {
-			    	g2D.fill(D_1);
-			    } else if(day == 1) {
-			    	g2D.fill(D_2);
-			    } else if(day == 2) {
-			    	g2D.fill(D_3);
-			    } else if(day == 3) {
-			    	g2D.fill(D_4);
-			    } else if(day == 4) {
-			    	g2D.fill(D_5);
-			    } else if(day == 5) {
-			    	g2D.fill(D_6);
-			    } else if(day == 6) {
-			    	g2D.fill(D_7);
-			    }
+				//for zoom
+				//zooming sections
+				Color x = new Color(255,109,76,0); // invisible
+				g2D.setColor(x);
 				
+			    Zoom_1 = new Rectangle2D.Double((int)(xAchse_x1 + (0 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_1);
+				Zoom_2 = new Rectangle2D.Double((int)(xAchse_x1 + (4 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_2);
+				Zoom_3 = new Rectangle2D.Double((int)(xAchse_x1 + (8 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_3);
+				Zoom_4 = new Rectangle2D.Double((int)(xAchse_x1 + (12 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_4);
+				Zoom_5 = new Rectangle2D.Double((int)(xAchse_x1 + (16 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_5);
+				Zoom_6 = new Rectangle2D.Double((int)(xAchse_x1 + (20 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
+				g2D.draw(Zoom_6);
 				
-				
-				Font font = new Font("Sans", Font.PLAIN, fontSize);
-			    g2D.setFont(font);
-			    g2D.setColor(Color.BLACK);
-				g2D.drawString("Tag 1", (int)(2*size2), (int)(size2)); 
-				g2D.drawString("Tag 2", (int)(5.5*size2), (int)(size2));
-			    g2D.drawString("Tag 3", (int)(9*size2), (int)(size2)); 
-			    g2D.drawString("Tag 4", (int)(12.5*size2), (int)(size2)); 
-			    g2D.drawString("Tag 5", (int)(16*size2), (int)(size2));
-			    g2D.drawString("Tag 6", (int)(19.5*size2), (int)(size2));
-			    g2D.drawString("Tag 7", (int)(23*size2), (int)(size2));
-			    
-			    //g2D.translate(2*size2, 2*size2);
-				
-				
-				
-				// START ANSICHT
-			    // Automatisches ändern des Koordinatensystems
-			    int j;
-			    if (day == 0) {
-			    	j = 0;
-			    } 
-			    else if(day == 1) {
-			    	j = 1;
-			    }
-			    else if(day == 2) {
-			    	j = 2;
-			    }
-			    else if(day == 3) {
-			    	j = 3;
-			    }
-			    else if (day == 4) {
-			    	j = 4;
-			    }
-			    else if (day == 5) {
-			    	j = 5;
-			    }
-			    else {
-			    	j = 6;
-			    }
-			    
-				/*int j = 0;
-				// Unterhaltungsstunden pro Tag
-				int[] hourlyUsageEnterDay = new int[numDays*24];
-				
-				for(int i = 0; i < hourlyUsageEnterDay.length; i++) {
-					hourlyUsageEnterDay[i] = 0;
-					for(Usage u : usage) {
-						if (u.getDay()== j) {
-							if(i == (u.getDay() * 24 + u.getHour())) {
-								if(u.getApp().getCategory() == "Unterhaltung") {
-									hourlyUsageEnterDay[i] += u.getDuration();
-								}
-							}
-						}
-					}
-				}*/
-				//System.out.println(hourlyUsageEnterDay[0]);
-				
-				
-				//Kommunikationsstunden pro Tag
-				int[] hourlyUsageCommDay = new int[numDays*24];
-				
-				for(int i = 0; i < hourlyUsageCommDay.length; i++) {
-					hourlyUsageCommDay[i] = 0;
-					for(Usage u : usage) {
-						if (u.getDay()== j) {
-							if(i == (u.getDay() * 24 + u.getHour())) {
-								if(u.getApp().getCategory() == "Kommunikation") {
-									hourlyUsageCommDay[i] += u.getDuration();
-								}
-							}
-						}
-					}
-				}
-				//System.out.println(hourlyUsageCommDay[0]);
-				
-				//Organisationsstunden pro Tag
-				int[] hourlyUsageOrgaDay = new int[numDays*24];
-				
-				for(int i = 0; i < hourlyUsageOrgaDay.length; i++) {
-					hourlyUsageOrgaDay[i] = 0;
-					for(Usage u : usage) {
-						if (u.getDay()== j) {
-							if(i == (u.getDay() * 24 + u.getHour())) {
-								if(u.getApp().getCategory() == "Organisatiorisches") {
-									hourlyUsageOrgaDay[i] += u.getDuration();
-								}
-							}
-						}
-					}
-				}
-				//System.out.println(hourlyUsageOrgaDay[0]);
+				  
+			    	
+			    	
+			    //}
 				//g2D.drawOval(46,796,8,8); // Nullpunkt
-				// Punkte an Achsenbeschriftung anpassen
-				// Gibt immer doppelt aus? Wie break setzen????
-				// Zeichnen Punkte Unterhaltung
 				
-				/*for (int i = 0; i<24; i++) {
-					g2D.setColor(java.awt.Color.green);
-					//drawOval(int x, int y, int width, int height)
-					g2D.drawOval(46+i,796+hourlyUsageEnterDay[i],12,12);
-					//System.out.println(i+","+hourlyUsageEnterDay[i]);
-					//g2D.fillOval(46+i,796+hourlyUsageEnterDay[i],12,12);
-					//Dauert zu lange Testen auf anderem Rechner
-					/*
-					while(i>0) {
-						g2D.drawLine(i-1, hourlyUsageEnterDay[i-1], i,hourlyUsageEnterDay[i]);
+				
+				
+//------------------------------------Punktzeichnung Unterhaltung-------------------------------------------------------------------			
+				if(days == 0) {
+					for(int i = 0;i<24;i++) {
+						g2D.setColor(java.awt.Color.green);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageEnter[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						//Dauert zu lange Testen auf anderem Rechner
+						
+						if(i>0) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageEnter[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageEnter[i] * yLength));
+						}
 					}
-				}*/
+				}
+				else if(days == 1) {
+					for(int i = 24;i<48;i++) {
+						g2D.setColor(java.awt.Color.green);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageEnter[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						//Dauert zu lange Testen auf anderem Rechner
+						
+						if(i>24) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageEnter[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageEnter[i] * yLength));
+						}
+					}
+				}
+				else if(days == 2) {
+					for(int i = 48;i<72;i++) {
+						g2D.setColor(java.awt.Color.green);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageEnter[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						//Dauert zu lange Testen auf anderem Rechner
+						
+						if(i>48) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageEnter[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageEnter[i] * yLength));
+						}
+					}
+				}
+				else if(days == 3) {
+					for(int i = 72;i<96;i++) {
+						g2D.setColor(java.awt.Color.green);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageEnter[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						//Dauert zu lange Testen auf anderem Rechner
+						
+						if(i>72) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageEnter[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageEnter[i] * yLength));
+						}
+					}
+				}
+				else if(days == 4) {
+					for(int i = 96;i<120;i++) {
+						g2D.setColor(java.awt.Color.green);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageEnter[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						//Dauert zu lange Testen auf anderem Rechner
+						
+						if(i>96) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageEnter[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageEnter[i] * yLength));
+						}
+					}
+				}
+				else if(days == 5) {
+					for(int i = 120;i<144;i++) {
+						g2D.setColor(java.awt.Color.green);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageEnter[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						//Dauert zu lange Testen auf anderem Rechner
+						
+						if(i>120) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageEnter[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageEnter[i] * yLength));
+						}
+					}
+				}
+				else if(days == 6) {
+					for(int i = 144;i<168;i++) {
+						g2D.setColor(java.awt.Color.green);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageEnter[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageEnter[i] * yLength)-6,12,12);
+						//Dauert zu lange Testen auf anderem Rechner
+						
+						if(i>144) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageEnter[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageEnter[i] * yLength));
+						}
+					}
+				}
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------			
+//------------------------------------Punktzeichnung Kommunikation----------------------------------------------------------------------------------------------------			
+				if(days == 0) {
+					for(int i = 0;i<24;i++) {
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageComm[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						
+						if(i>0) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageComm[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageComm[i] * yLength));
+						}
+					}
+				}
+				else if(days == 1) {
+					for(int i = 24;i<48;i++) {
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageComm[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						
+						if(i>24) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageComm[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageComm[i] * yLength));
+						}
+					}
+				}
+				else if(days == 2) {
+					for(int i = 48;i<72;i++) {
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageComm[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						
+						if(i>48) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageComm[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageComm[i] * yLength));
+						}
+					}
+				}
+				else if(days == 3) {
+					for(int i = 72;i<96;i++) {
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageComm[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						
+						if(i>72) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageComm[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageComm[i] * yLength));
+						}
+					}
+				}
+				else if(days == 4) {
+					for(int i = 96;i<120;i++) {
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageComm[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						
+						if(i>96) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageComm[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageComm[i] * yLength));
+						}
+					}
+				}
+				else if(days == 5) {
+					for(int i = 120;i<144;i++) {
+						Color c = new Color(0,255,255,250);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageComm[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						
+						if(i>120) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageComm[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageComm[i] * yLength));
+						}
+					}
+				}
+				else if(days == 6) {
+					for(int i = 144;i<168;i++) {
+						Color c = new Color(0,255,255,250);//türkis
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						System.out.println((i%24)+","+hourlyUsageComm[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageComm[i] * yLength)-6,12,12);
+						
+						if(i>144) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageComm[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageComm[i] * yLength));
+						}
+					}
+				}
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------			
+//------------------------------------Punktzeichnung Organisation----------------------------------------------------------------------------------------------------			
+				if(days == 0) {
+					for(int i = 0;i<24;i++) {
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						
+						if(i>0) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageOrga[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageOrga[i] * yLength));
+						}
+					}
+				}
+				else if(days == 1) {
+					for(int i = 24;i<48;i++) {
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						
+						if(i>24) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageOrga[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageOrga[i] * yLength));
+						}
+					}
+				}
+				else if(days == 2) {
+					for(int i = 48;i<72;i++) {
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						
+						if(i>48) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageOrga[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageOrga[i] * yLength));
+						}
+					}
+				}
+				else if(days == 3) {
+					for(int i = 72;i<96;i++) {
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						
+						if(i>72) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageOrga[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageOrga[i] * yLength));
+						}
+					}
+				}
+				else if(days == 4) {
+					for(int i = 96;i<120;i++) {
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						
+						if(i>96) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageOrga[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageOrga[i] * yLength));
+						}
+					}
+				}
+				else if(days == 5) {
+					for(int i = 120;i<144;i++) {
+						Color c = new Color(255, 0, 0,150);
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						
+						if(i>120) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageOrga[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageOrga[i] * yLength));
+						}
+					}
+				}
+				else if(days == 6) {
+					for(int i = 144;i<168;i++) {
+						Color c = new Color(255, 0, 0,150);//pink
+						g2D.setColor(c);
+						//drawOval(int x, int y, int width, int height)
+						g2D.drawOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						//System.out.println((i%24)+","+hourlyUsageOrga[i]);
+						g2D.fillOval(xAchse_x1 + ((i%24) * xLength)-6,yAchse_y2 - (hourlyUsageOrga[i] * yLength)-6,12,12);
+						
+						if(i>144) {
+							System.out.println(i);
+							g2D.drawLine(xAchse_x1 + (((i%24)-1) * xLength), yAchse_y2 - (hourlyUsageOrga[i-1] * yLength), xAchse_x1 + ((i%24) * xLength),yAchse_y2 - (hourlyUsageOrga[i] * yLength));
+						}
+					}
+				}
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------			
 				
-				//Zeichnen Punkte Kommunikation
-				//for (int i = 0; i<24; i++) {
-					//g2D.setColor(java.awt.Color.red);
-					//g2D.drawOval(46+i,796+hourlyUsageCommDay[i],12,12); 
-					//g2D.fillOval(46+i,796+hourlyUsageCommDay[i],12,12); 
-					//Dauert zu lange Testen auf anderem Rechner
-					/*
-					while(i>0) {
-						g2D.drawLine(i-1, hourlyUsageCommDay[i-1], i,hourlyUsageCommDay[i]);
-					}*/
-				//}
-				
-				//Zeichnen Punkte Organisation
-				//for (int i = 0; i<24; i++) {
-					//g2D.setColor(java.awt.Color.blue);
-					//g2D.drawOval(46+0,796+hourlyUsageOrgaDay[0],12,12);
-					//g2D.fillOval(46+0,796+hourlyUsageOrgaDay[0],12,12); 
-					//Dauert zu lange Testen auf anderem Rechner
-					/*
-					while(i>0) {
-						g2D.drawLine(i-1, hourlyUsageOrgaDay[i-1], i,hourlyUsageOrgaDay[i]);
-					}*/
-				//}
-				
-					
 			}
 
 			//pie chart
@@ -949,12 +1222,46 @@ public class View extends JPanel  {
 			return D_7;
 		}
 		
+		//Rechtecke für Zoom
+		public Rectangle2D.Double getZoom_1() {
+			return Zoom_1;
+		}
+		
+		public Rectangle2D.Double getZoom_2() {
+			return Zoom_2;
+		}
+		
+		public Rectangle2D.Double getZoom_3() {
+			return Zoom_3;
+		}
+		
+		public Rectangle2D.Double getZoom_4() {
+			return Zoom_4;
+		}
+		
+		public Rectangle2D.Double getZoom_5() {
+			return Zoom_5;
+		}
+		
+		public Rectangle2D.Double getZoom_6() {
+			return Zoom_6;
+		}
+		
+		
 		public int getCategory() {
 			return category;
 		}
 		
 		public void setCategory(int cat) {
 			this.category = cat;
+		}
+		
+		public int getDays() {
+			return days;
+		}
+		
+		public void setDays(int d) {
+			this.days = d;
 		}
 		
 		public int getMode() {
@@ -996,4 +1303,32 @@ public class View extends JPanel  {
 		public int getInfoY() {
 			return infoY;
 		}
+		
+		
+		//Zoomfunktionen
+		public void setZoomPercentage(int zoomPercentage) {
+		    percentage = ((double) zoomPercentage) / 100;
+		  }
+
+		  public void originalSize() {
+		    zoom = 1;
+		  }
+
+		  public void zoomIn() {
+		    zoom += percentage;
+		  }
+
+		  public void zoomOut() {
+		    zoom -= percentage;
+
+		    if (zoom < percentage) {
+		      if (percentage > 1.0) {
+		        zoom = 1.0;
+		      } else {
+		        zoomIn();
+		      }
+		    }
+		  }
+		  
+		  
 }

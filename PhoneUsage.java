@@ -1,4 +1,4 @@
-package infovis.phoneUsage;
+package phoneUsage;
 
 import infovis.gui.GUI;
 
@@ -9,7 +9,7 @@ public class PhoneUsage {
 	private View view;
 	private Model model;
 	private MouseController controller ;
-	private KeyController key;
+	//private KeyController key;
 	
 	public JPanel getView(){
 		if (view == null) generatePhoneUsage();
@@ -20,13 +20,14 @@ public class PhoneUsage {
 		view = new View();
 		model = new Model();
 		controller = new MouseController();
-		key = new KeyController();
+		//key = new KeyController();
 		view.setModel(model);
 		controller.setModel(model);
 		controller.setView(view);
 		view.addMouseListener(controller);
 		view.addMouseMotionListener(controller);
-		view.addKeyListener(key);
+		view.addMouseWheelListener(controller);
+		//view.addKeyListener(key);
 	}
 	
 	public static void main(String[] args) {
