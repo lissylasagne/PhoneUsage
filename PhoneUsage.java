@@ -5,18 +5,18 @@ import infovis.gui.GUI;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-public class Scatterplot {
+public class PhoneUsage {
 	private View view;
 	private Model model;
 	private MouseController controller ;
 	private KeyController key;
 	
 	public JPanel getView(){
-		if (view == null) generateScatterplot();
+		if (view == null) generatePhoneUsage();
 		return view;
 	}
 
-	private void generateScatterplot() {
+	private void generatePhoneUsage() {
 		view = new View();
 		model = new Model();
 		controller = new MouseController();
@@ -33,7 +33,7 @@ public class Scatterplot {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				GUI application = new GUI();
-				application.setView(new Scatterplot().getView());
+				application.setView(new PhoneUsage().getView());
 				application.getJFrame().setVisible(true);
 			}
 		});

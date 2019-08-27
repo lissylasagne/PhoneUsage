@@ -13,12 +13,14 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	private Model model = null;
 	private View view = null;
 	private int x,y = 0;
-
+	private int difX, difY;
+	
 	public void mouseClicked(MouseEvent arg0) {
 		x = arg0.getX();
 		y = arg0.getY();
 		
 		if(view.getMode() == 0) {
+			//category buttons
 			Rectangle2D.Double R_all = view.getR_all();
 			Rectangle2D.Double R_enter = view.getR_enter();
 			Rectangle2D.Double R_comm = view.getR_comm();
@@ -32,6 +34,17 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				view.setCategory(2);
 			} else if(R_orga.contains(x,y)) {
 				view.setCategory(3);
+			} else {
+			//hour rectangles
+				for(int i = 0; i < view.getAllShapes().length; i++) {
+					if(view.getAllShapes(i).contains(x,y)) {
+						view.setActiveShape(view.getAllShapes(i));
+						view.repaint();
+						break;
+					} else if(i == view.getAllShapes().length -1){
+						view.setActiveShape(null);
+					}
+				}
 			}
 			
 			view.repaint();
@@ -61,39 +74,30 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				view.setCategory(10);
 			}
 			view.repaint();
+		
 		} else if(view.getMode() == 2) {
 			if(view.getCategory() == 0) {
-				for(int i = 0; i < view.getPieChart().length; i++) {
-					if(view.getPieChart(i).contains(x,y)) {
+				for(int i = 0; i < view.getAllShapes().length; i++) {
+					if(view.getAllShapes(i).contains(x,y)) {
 						view.setCategory(i+1);
 						view.repaint();
 					}
 				}
 			} else if(view.getCategory() == 1 || view.getCategory() == 2 || view.getCategory() == 3) {
-				String cat = "";
-				int total = 0;
-				switch(view.getCategory()) {
-					case 1:
-						cat = "Unterhaltung";
-						break;
-					case 2:
-						cat = "Kommunikation";
-						break;
-					case 3:
-						cat = "Organisatorisches";
-						break;
-				}
-				
-				for(int i = 0; i < view.getPieChart().length; i++) {
-					if(view.getPieChart(i).contains(x,y)) {
-						view.setChosenArc(view.getPieChart(i));
-						view.repaint();
-						break;
-					} else {
-						if(i == view.getPieChart().length-1) {
-							view.setCategory(0);
-							view.setChosenArc(null);
-							view.repaint();
+				if(view.getActiveShape().contains(x,y)) {
+					
+				} else {
+					for(int i = 0; i < view.getAllShapes().length; i++) {
+						if(view.getAllShapes(i).contains(x,y)) {
+							//view.setActiveShape(view.getAllShapes(i));
+							//view.repaint();
+							break;
+						} else {
+							if(i == view.getAllShapes().length-1) {
+								view.setCategory(0);
+								view.setActiveShape(null);
+								view.repaint();
+							}
 						}
 					}
 				}
@@ -108,12 +112,36 @@ public class MouseController implements MouseListener, MouseMotionListener {
 	}
 
 	public void mousePressed(MouseEvent arg0) {
+		x = arg0.getX();
+		y = arg0.getY();
+		
+		if(view.getCategory() == 1 || view.getCategory() == 2 || view.getCategory() == 3) {
+			if(view.getActiveShape().contains(x,y)) {
+				int oldX = view.getInfoX();
+				int oldY = view.getInfoY();
+				
+				difX = x-oldX;
+				difY = y-oldY;
+			}
+		}
 	}
 
 	public void mouseReleased(MouseEvent arg0) {
 	}
 
 	public void mouseDragged(MouseEvent arg0) {
+		//Debug.println("X: " + difX);
+		//Debug.println("Y: " + difY);
+		
+		x = arg0.getX();
+		y = arg0.getY();
+		
+		if(view.getMode() == 2) {
+			view.setInfoX(x - difX);
+			view.setInfoY(y - difY);
+			
+			view.repaint();
+		}
 	}
 
 	public void mouseMoved(MouseEvent arg0) {		

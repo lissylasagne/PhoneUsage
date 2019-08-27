@@ -25,9 +25,12 @@ import java.util.stream.Collectors;
 public class View extends JPanel  {
 	     private Model model = null;
 	     private Graphics2D graphics;
+	     
+	     //counter for computing things just once
 	     private int counter = 0;
+	     
 	     //visualisation mode
-	     private int mode = 1;
+	     private int mode = 2;
 
 	     //app category
 	     //0=all, 1=entertainment, 2=communication, 3=organisation
@@ -35,23 +38,30 @@ public class View extends JPanel  {
 	     
 	     private int day = 0;
 	     
+	     //buttons for choosing cateory
 	     private Rectangle2D.Double R_all;
 	     private Rectangle2D.Double R_enter;
 	     private Rectangle2D.Double R_comm;
 	     private Rectangle2D.Double R_orga;
 	     
+	     //all apps and usages
 	     private ArrayList<App> apps = new ArrayList<App>();
 	     private ArrayList<Usage> usage = new ArrayList<Usage>();
 	     
+	     //number of listed days
 	     private int numDays = 0;
 	     
+	     //hourly usage sorted by category
 	     private int[] hourlyUsage;
 	     private int[] hourlyUsageEnter;
 	     private int[] hourlyUsageComm;
 	     private int[] hourlyUsageOrga;
 	     
-	     //for mode 0
-	     private Rectangle2D[] hourlyUsageRec;
+	     //for mode 0 and 2
+	     private Shape[] allShapes;
+	     private Shape activeShape;
+	     private int infoX = 200;
+	     private int infoY = 200;
 	     
 	     //for mode 1
 	     private Rectangle2D.Double D_1;
@@ -61,10 +71,6 @@ public class View extends JPanel  {
 	     private Rectangle2D.Double D_5;
 	     private Rectangle2D.Double D_6;
 	     private Rectangle2D.Double D_7;
-	     
-	     //for mode 2
-	     private Arc2D[] pieChart; 
-	     private Arc2D chosenArc;
 		 
 		@Override
 		public void paint(Graphics g) {	
@@ -235,12 +241,14 @@ public class View extends JPanel  {
 			    g2D.drawString("Kommunikation", (int)(14*size), (int)(size)); 
 			    g2D.drawString("Organisatorisch", (int)(20.75*size), (int)(size)); 
 				
-				g2D.translate(2*size, 2*size);
+				
+				allShapes = new Shape[hourlyUsage.length];
 				
 				//for loops: days and hours
 				for(int row = 0; row < hourlyUsage.length/24; row++) {
 					for(int column = 0; column < 24; column++) {
-						Rectangle2D rect = new Rectangle2D.Double(0, 0, size, size);
+						Rectangle2D rect = new Rectangle2D.Double(2*size+column*size, 2*size+row*size, size, size);
+						allShapes[24*row+column] = rect;						
 						
 						//map duration from 0 to 60 to color from 255 to 0
 						int color = 0; 
@@ -261,16 +269,86 @@ public class View extends JPanel  {
 						//day and night color
 						if(column <= 8 || column >= 20) {
 							g2D.setColor(new Color(35, 64, 153, 55));
-						}
-						else
-						{
+						} else {
 							g2D.setColor(new Color(255, 137, 3, 55));
 						}
-						
 						g2D.fill(rect);
-						g2D.translate(size, 0);
+					}
+				}
+				
+				if(activeShape != null) {
+					g2D.setColor(new Color(200,0,0,255));
+					g2D.fill(activeShape);
+					
+					int i = getActiveShapeFromAll(activeShape, allShapes);
+					int usage = 0;
+					
+					String cat = "";
+					if(category == 0) {
+						usage = hourlyUsage[i];
+					} else if(category == 1) {
+						usage = hourlyUsageEnter[i];
+						cat = "Unterhaltung";
+					} else if(category == 2) {
+						usage = hourlyUsageComm[i];
+						cat = "Kommunikation";
+					} else if(category == 3) {
+						usage = hourlyUsageOrga[i];
+						cat = "Organisatorisches";
+					}
+					
+					String infoString = new String("Dauer: " + usage + "min");
+					
+					int appCount = 0;
+					ArrayList<String> infoStrings = new ArrayList<String>(); 
+					
+					for (App a : apps) {
+						if(category == 0) {
+							for(Usage u : a.getUsage()) {
+								if((u.getDay()*24) + u.getHour() == i) {
+									appCount++;
+									infoStrings.add(new String(a.getName() + ": " + u.getDuration() + "min"));
+								}
+							}
+						} else {
+							if(a.getCategory().contentEquals(cat)) {
+								for(Usage u : a.getUsage()) {
+									if((u.getDay()*24) + u.getHour() == i) {
+										appCount++;
+										infoStrings.add(new String(a.getName() + ": " + u.getDuration() + "min"));
+									}
+								}
+							}
 						}
-					g2D.translate((-size*24), size);
+					}
+					
+					int x = (getWidth() / (int)((Rectangle2D)activeShape).getX());
+					if(x > 1) {
+						x = (int) (4*(getWidth()/6));
+					} else {
+						x = (int) ((getWidth()/6));
+					}
+					int y = (getHeight() / (int)((Rectangle2D)activeShape).getY());
+					
+					if(y > 1) {
+						y = (int) (4*(getHeight()/6));
+					} else {
+						y = (int) ((getHeight()/6));
+					}
+					
+					Rectangle2D infoRect = new Rectangle2D.Double(x,y,(getWidth()/6), size*appCount);
+					g2D.setColor(Color.WHITE);
+					g2D.fill(infoRect);
+					
+					g2D.setColor(Color.BLACK);
+					g2D.drawString(infoString, x, y);
+					
+					int iter = 1;
+					for(String s : infoStrings) {
+						g2D.drawString(s, x, (int)(y+iter*size));
+						iter++;
+					}
+					
 				}
 			} 
 			
@@ -585,39 +663,64 @@ public class View extends JPanel  {
 				//Debug.println("Total: " + usage + " Enter: "+ enter + " Comm: " + comm + " Orga: " + orga);
 				
 				if(category == 0) {
-					pieChart = new Arc2D[3];
+					allShapes = new Shape[3];
 					
 					//map usage to 360 degree and paint diagramm
 					int enter360 = (enter * 360)/usage;
 					int comm360 = (comm * 360)/usage;
 					int orga360 = (orga * 360)/usage;
 					
+					int i = 0;
 					while((enter360+comm360+orga360) != 360) {
-						int random = (int) (Math.random()*3);
-						switch(random) {
-							case 0:
-								enter360++; 
-								break;
-							case 1: 
-								comm360++;
-								break;
-							case 2: 
-								orga360++;
-								break;
+						if(i % 3 == 0) {
+							enter360++; 
+						} else if(i % 3 == 1) {
+							comm360++; 
+						} else if(i % 3 == 2) {
+							orga360++; 
 						}
 					}
+					
 					//Debug.println("Total: " + usage + " Enter: "+ enter + " Comm: " + comm + " Orga: " + orga);
 					g2D.setColor(yellow);
-					pieChart[0] = new Arc2D.Double(bounds, 0, enter360, Arc2D.PIE);
-					g2D.fill(pieChart[0]);
+					allShapes[0] = new Arc2D.Double(bounds, 0, enter360, Arc2D.PIE);
+					g2D.fill(allShapes[0]);
 							
 					g2D.setColor(red);
-					pieChart[1] = new Arc2D.Double(bounds, enter360, comm360, Arc2D.PIE);
-					g2D.fill(pieChart[1]);
+					allShapes[1] = new Arc2D.Double(bounds, enter360, comm360, Arc2D.PIE);
+					g2D.fill(allShapes[1]);
 					
 					g2D.setColor(blue);
-					pieChart[2] = new Arc2D.Double(bounds, enter360+comm360, orga360, Arc2D.PIE);
-					g2D.fill(pieChart[2]);
+					allShapes[2] = new Arc2D.Double(bounds, enter360+comm360, orga360, Arc2D.PIE);
+					g2D.fill(allShapes[2]);
+					
+					//draw info for clicked arc
+					for(int j = 0; j < 3; j++) {
+						Point2D start = ((Arc2D)allShapes[j]).getStartPoint();
+						Point2D end = ((Arc2D)allShapes[j]).getEndPoint();
+						Point2D center = new Point2D.Double(((Arc2D)allShapes[j]).getCenterX(), ((Arc2D)allShapes[j]).getCenterY());
+						
+						Point2D info = new Point2D.Double((start.getX() + end.getX() - 1.2*center.getX()), 
+															(start.getY() + end.getY() - 1.2*center.getY()));
+						if(((Arc2D)allShapes[j]).getAngleExtent() >= 180) {
+							info.setLocation(1.8*center.getX() - info.getX(), 1.8*center.getY() - info.getY());
+						}
+						
+						String infoString = "";
+						
+						if(j == 0) {
+							infoString = new String("Unterhaltung " + printTimeInHours(enter));
+						} 
+						else if(j == 1) {
+							infoString = new String("Kommunikation " + printTimeInHours(comm));
+						} 
+						else if(j == 2) {
+							infoString = new String("Organisatorisches " + printTimeInHours(orga));
+						}
+						
+						g2D.setColor(Color.BLACK);
+						g2D.drawString(infoString, (int)info.getX(), (int)info.getY());
+					}
 					
 				} else if(category == 1 || category == 2 || category == 3) {
 					String cat = "";
@@ -654,7 +757,7 @@ public class View extends JPanel  {
 					
 					//array with app duration; i = app
 					int[] appDuration = new int[count];
-					pieChart = new Arc2D[count];
+					allShapes = new Shape[count];
 					count = 0;
 					
 					for (App a : apps) {
@@ -681,40 +784,76 @@ public class View extends JPanel  {
 							arcSize = 360 - totalArcSize;
 						}
 						
-						pieChart[i] = new Arc2D.Double(bounds, totalArcSize, arcSize, Arc2D.PIE);
-						g2D.fill(pieChart[i]);
+						allShapes[i] = new Arc2D.Double(bounds, totalArcSize, arcSize, Arc2D.PIE);
+						g2D.fill(allShapes[i]);
 						
 						totalArcSize += arcSize;
 					}
-					if(chosenArc != null) {
-						Point2D start = chosenArc.getStartPoint();
-						Point2D end = chosenArc.getEndPoint();
-						Point2D center = new Point2D.Double(chosenArc.getCenterX(), chosenArc.getCenterY());
+					
+					/*
+					//draw info for clicked arc
+					if(activeShape != null) {
+						Point2D start = ((Arc2D)activeShape).getStartPoint();
+						Point2D end = ((Arc2D)activeShape).getEndPoint();
+						Point2D center = new Point2D.Double(((Arc2D)activeShape).getCenterX(), ((Arc2D)activeShape).getCenterY());
 						
-						Point2D info = new Point2D.Double((start.getX() + end.getX() - center.getX()), 
-															(start.getY() + end.getY() - center.getY()));
-						if(chosenArc.getAngleExtent() >= 180) {
-							info.setLocation(1.5*center.getX() - 0.8*info.getX(), 1.5*center.getY() - 0.8*info.getY());
+						Point2D info = new Point2D.Double((start.getX() + end.getX() - 1.2*center.getX()), 
+															(start.getY() + end.getY() - 1.2*center.getY()));
+						if(((Arc2D)activeShape).getAngleExtent() >= 180) {
+							info.setLocation(1.8*center.getX() - info.getX(), 1.8*center.getY() - info.getY());
 						}
+												
+						int i = getActiveShapeFromAll(activeShape, allShapes);
 						
-						String infoString = "";
+						String infoString = "";			
 						
-						for(int i = 0; i < pieChart.length; i++) {
-							if(pieChart[i].equals(chosenArc)) {
-								int iter = 0;
-								for (App a : apps) {
-									if(a.getCategory().equals(cat)) {
-										if(iter == i) {
-											infoString = new String(a.getName() + " \r\n" + a.getTotal() + "min");
-										}
-										iter++;
-									}
+						int iter = 0;
+						for (App a : apps) {
+							if(a.getCategory().equals(cat)) {
+								if(iter == i) {
+									infoString = new String(a.getName() + " \r\n" + printTimeInHours(a.getTotal()));
 								}
+								iter++;
 							}
 						}
 						
 						g2D.setColor(Color.BLACK);
 						g2D.drawString(infoString, (int)info.getX(), (int)info.getY());
+					}
+					*/
+					
+					int numApps = allShapes.length;
+					
+					String[] infoStrings = new String[numApps];
+					
+					for(int i = 0; i < numApps; i++) {
+						int iter = 0;
+						for (App a : apps) {
+							if(a.getCategory().equals(cat)) {								
+								if(iter == i) {
+									infoStrings[i] = new String(a.getName() + " \r\n" + printTimeInHours(a.getTotal()));
+								}
+								iter++;
+							}
+						}
+					}
+					
+					int fontSize = 14;
+					
+					g2D.setColor(Color.white);
+					
+					Rectangle2D rect = new Rectangle2D.Double(infoX, infoY, fontSize*10, numApps*(fontSize) + 2);
+					activeShape = rect;
+					g2D.fill(rect);
+					
+					g2D.setColor(Color.black);
+					g2D.draw(rect);
+					
+					Font font = new Font("Sans", Font.PLAIN, fontSize);
+				    g2D.setFont(font);
+					
+					for(int i = 0; i < numApps; i++) {
+						g2D.drawString(infoStrings[i], infoX, infoY + fontSize* (i+1));
 					}
 				}
 			}
@@ -744,6 +883,41 @@ public class View extends JPanel  {
 		
 		public Rectangle2D.Double getR_orga() {
 			return R_orga;
+		}
+		
+		//mode == 0
+		public Shape[] getAllShapes() {
+			return allShapes;
+		}
+		
+		public Shape getAllShapes(int i) {
+			return allShapes[i];
+		}
+		
+		public void setAllShapes(Shape[] shapes) {
+			this.allShapes = shapes;
+		}
+		
+		public void setAllShapes(Shape shape, int i) {
+			this.allShapes[i] = shape;
+		}
+		
+		public Shape getActiveShape() {
+			return activeShape;
+		}
+		
+		public void setActiveShape(Shape shape) {
+			this.activeShape = shape;
+		}
+		
+		public int getActiveShapeFromAll(Shape activeShape, Shape[] allShapes) {
+			for(int i = 0; i < allShapes.length; i++) {
+				if(allShapes[i].equals(activeShape)) {
+					return i;
+				}
+			}
+			Debug.println("No shape found");
+			return 0;
 		}
 		
 		//mode == 1
@@ -791,24 +965,35 @@ public class View extends JPanel  {
 			this.mode = mode;
 		}
 		
-		//mode = 2
-		public Arc2D[] getPieChart() {
-			return pieChart;
-		}
-		
-		public Arc2D getPieChart(int i) {
-			return pieChart[i];
-		}
-		
 		public ArrayList<App> getApps() {
 			return apps;
 		}
 		
-		public Arc2D getChosenArc() {
-			return chosenArc;
+		public String printTimeInHours(int min) {
+			String output;
+			if(min >= 60) {
+				output = new String((min/60) + "h " + (min%60) + "min");
+			} else {
+				output = new String((min%60) + "min");
+			}
+			return output;
 		}
 		
-		public void setChosenArc(Arc2D arc) {
-			this.chosenArc = arc;
+		//mode 2
+		
+		public void setInfoX(int x) {
+			this.infoX = x;
+		}
+		
+		public int getInfoX() {
+			return infoX;
+		}
+		
+		public void setInfoY(int y) {
+			this.infoY = y;
+		}
+		
+		public int getInfoY() {
+			return infoY;
 		}
 }

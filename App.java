@@ -45,7 +45,7 @@ public class App {
 		else if(name.equals("SoundCloud")) {
 			category = "Unterhaltung";
 		}
-		else if(name.equals("Soundcoreset Stimmgerät & Metronom")) {
+		else if(name.equals("Soundcoreset")) {
 			category = "Unterhaltung";
 		}
 		else if(name.equals("UniNow")) {
