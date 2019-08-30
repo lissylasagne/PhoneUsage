@@ -1,4 +1,4 @@
-package phoneUsage;
+package infovis.phoneUsage;
 
 import infovis.debug.Debug;
 

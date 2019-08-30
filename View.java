@@ -1,23 +1,17 @@
-package phoneUsage;
+package infovis.phoneUsage;
 
 import infovis.debug.Debug;
-import java.awt.geom.AffineTransform;
-
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -32,7 +26,7 @@ public class View extends JPanel  {
 	     private int counter = 0;
 	     
 	     //visualisation mode
-	     private int mode = 2;
+	     private int mode = 0;
 
 	     //app category
 	     //0=all, 1=entertainment, 2=communication, 3=organisation
@@ -72,8 +66,8 @@ public class View extends JPanel  {
 	     //for mode 0 and 2
 	     private Shape[] allShapes;
 	     private Shape activeShape;
-	     private int infoX = 200;
-	     private int infoY = 200;
+	     private int infoX = 100;
+	     private int infoY = 100;
 	     
 	     //for mode 1
 	     private Rectangle2D.Double D_1;
@@ -91,10 +85,6 @@ public class View extends JPanel  {
 	     private Rectangle2D.Double Zoom_5;
 	     private Rectangle2D.Double Zoom_6;
 	     
-	     
-	     //for mode 2
-	     private Arc2D[] pieChart; 
-	     private Arc2D chosenArc;
 		 
 		@Override
 		public void paint(Graphics g) {	
@@ -140,11 +130,9 @@ public class View extends JPanel  {
 					rangeCount++;
 				}
 					
-				int dataCount = 0;
 				for (Data d : model.getList()) {
 					Usage u = new Usage(d.getLabel(), (int)(d.getValue(0)),  (int)(d.getValue(1)),  (int)(d.getValue(2)));
 					usage.add(u);
-					dataCount++;
 				}
 					
 				//get list of all used apps without doubles
@@ -248,6 +236,8 @@ public class View extends JPanel  {
 
 			    Color red = new Color(255,109,76);
 			    Color grey = new Color(240,240,240);
+			    Color yellow = new Color(255, 137, 3, 55);
+			    Color blue = new Color(35, 64, 153, 55);
 			    g2D.setColor(grey);
 			    
 			    R_all = new Rectangle2D.Double((int)(1.9*size), (int)(size)-fontSize, (int)(3.7*size), (int)(size));
@@ -310,35 +300,33 @@ public class View extends JPanel  {
 						
 						//day and night color
 						if(column <= 8 || column >= 20) {
-							g2D.setColor(new Color(35, 64, 153, 55));
+							g2D.setColor(blue);
 						} else {
-							g2D.setColor(new Color(255, 137, 3, 55));
+							g2D.setColor(yellow);
 						}
 						g2D.fill(rect);
 					}
 				}
 				
+				//if any box is clicked it turn into active shape
 				if(activeShape != null) {
-					g2D.setColor(new Color(200,0,0,255));
-					g2D.fill(activeShape);
+					//g2D.setColor(new Color(0,0,0,255));
+					//g2D.fill(activeShape);
 					
 					int i = getActiveShapeFromAll(activeShape, allShapes);
-					int usage = 0;
-					
+
 					String cat = "";
-					if(category == 0) {
-						usage = hourlyUsage[i];
-					} else if(category == 1) {
-						usage = hourlyUsageEnter[i];
+					/*if(category == 0) {
+						
+					} else */
+					if(category == 1) {
 						cat = "Unterhaltung";
 					} else if(category == 2) {
-						usage = hourlyUsageComm[i];
 						cat = "Kommunikation";
 					} else if(category == 3) {
-						usage = hourlyUsageOrga[i];
 						cat = "Organisatorisches";
 					}
-					
+					/*
 					String infoString = new String("Dauer: " + usage + "min");
 					
 					int appCount = 0;
@@ -390,7 +378,208 @@ public class View extends JPanel  {
 						g2D.drawString(s, x, (int)(y+iter*size));
 						iter++;
 					}
+					*/
 					
+					int appCount = 0;
+					ArrayList<String> appNames = new ArrayList<String>();
+					ArrayList<Integer> appDuration = new ArrayList<Integer>();
+					
+					//get names and usage duration from apps that are used during chosen hour
+					for (App a : apps) {
+						if(category == 0) {
+							for(Usage u : a.getUsage()) {
+								if((u.getDay()*24) + u.getHour() == i) {
+									appCount++;
+									appNames.add(new String(a.getName() + ": " + u.getDuration() + "min"));
+									appDuration.add(u.getDuration());
+								}
+							}
+						} else {
+							if(a.getCategory().contentEquals(cat)) {
+								for(Usage u : a.getUsage()) {
+									if((u.getDay()*24) + u.getHour() == i) {
+										appCount++;
+										appNames.add(new String(a.getName() + ": " + u.getDuration() + "min"));
+										appDuration.add(u.getDuration());
+									}
+								}
+							}
+						}
+					}
+					
+					//get position of infobox depending on position of clicked box
+					double activeX = ((Rectangle2D)activeShape).getX();
+					double activeY = ((Rectangle2D)activeShape).getY();
+					
+					int x = (getWidth() / (int)activeX);
+					int y = (getWidth() / (int)activeY);
+					
+					//pos for writing strings later
+					int xString = 0;
+					
+					//get points of small box that are closer to big box for drawing "3d"
+					Point2D poly1 = new Point2D.Double(0,0);
+					Point2D poly2 = new Point2D.Double(0,0);
+					Point2D poly3 = new Point2D.Double(0,0);
+					
+					Point2D poly4 = new Point2D.Double(0,0);
+					Point2D poly5 = new Point2D.Double(0,0);
+					Point2D poly6 = new Point2D.Double(0,0);
+					
+					if(x > 1) {
+						x = (int)(activeX + 2.5*size);
+						xString = (int)(x + size*6);
+						if(y > 1) {
+							y = (int)(activeY + 2.5*size);
+							
+							poly1.setLocation(activeX + size, activeY);
+							poly2.setLocation(activeX, activeY);
+							poly3.setLocation(activeX, activeY + size);
+							
+							poly4.setLocation(x, y + size*4);
+							poly5.setLocation(x, y);
+							poly6.setLocation(x + size*4, y);
+							
+						} else {
+							y = (int)((int)activeY - 5.5*size);
+							
+							poly1.setLocation(activeX, activeY);
+							poly2.setLocation(activeX, activeY + size);
+							poly3.setLocation(activeX + size, activeY + size);
+							
+							poly4.setLocation(x + size*4, y + size*4);
+							poly5.setLocation(x, y + size*4);
+							poly6.setLocation(x, y);
+						}
+					
+					} else {
+						x = (int)((int)activeX - 5.5*size);
+						xString = (int)(x - size*6);
+						if(y > 1) {
+							y = (int)((int)activeY + 2.5*size);
+							
+							poly1.setLocation(activeX, activeY);
+							poly2.setLocation(activeX + size, activeY);
+							poly3.setLocation(activeX + size, activeY + size);
+							
+							poly4.setLocation(x + size*4, y + size*4);
+							poly5.setLocation(x + size*4, y);
+							poly6.setLocation(x, y);
+						
+						} else {
+							y = (int)((int)activeY - 5.5*size);
+							
+							poly1.setLocation(activeX + size, activeY);
+							poly2.setLocation(activeX + size, activeY + size);
+							poly3.setLocation(activeX, activeY + size);
+							
+							poly4.setLocation(x + size*4, y);
+							poly5.setLocation(x + size*4, y + size*4);
+							poly6.setLocation(x, y + size*4);
+						}
+					}
+					
+					//draw boxes and map duration of each usage on box size
+					Rectangle2D infoRect = new Rectangle2D.Double(x,y, size*4, size*4);
+					int fullDuration = 0;
+					for(int d : appDuration) {
+						fullDuration += d;
+					}
+					
+					double currentHeight = 0;
+					double[] heights = new double[appCount];
+					double multiplier = (size*4)/fullDuration;
+					int iter = 0;
+					for(int d : appDuration) {
+						double height = d * multiplier;
+						heights[iter] = height;
+						Rectangle2D appRect = new Rectangle2D.Double(x,y+currentHeight, size*4, height);
+						if(iter%2 == 0) {
+							g2D.setColor(new Color(0,0,0,50));
+						} else {
+							g2D.setColor(new Color(255,255,255,150));
+						}
+						g2D.fill(appRect);
+						currentHeight += height;
+						iter++;
+					}
+					
+					if(iter > 0) {
+						Polygon polyBottom = new Polygon();
+						
+						polyBottom.addPoint((int)poly2.getX(), (int)poly2.getY());
+						polyBottom.addPoint((int)poly3.getX(), (int)poly3.getY());
+						polyBottom.addPoint((int)poly4.getX(), (int)poly4.getY());
+						polyBottom.addPoint((int)poly5.getX(), (int)poly5.getY());
+						
+						g2D.setColor(Color.gray);
+						g2D.fill(polyBottom);
+						
+						Polygon polyTop = new Polygon();
+						
+						polyTop.addPoint((int)poly5.getX(), (int)poly5.getY());
+						polyTop.addPoint((int)poly2.getX(), (int)poly2.getY());
+						polyTop.addPoint((int)poly1.getX(), (int)poly1.getY());
+						polyTop.addPoint((int)poly6.getX(), (int)poly6.getY());
+						
+						g2D.setColor(Color.white);
+						g2D.fill(polyTop);
+						
+						if(i%24 <= 8 || i%24 >= 20) {
+							g2D.setColor(blue);
+						} else {
+							g2D.setColor(yellow);
+						}
+						
+						g2D.fill(infoRect);
+						
+						Polygon polyFull = new Polygon();
+						polyFull.addPoint((int)poly1.getX(), (int)poly1.getY());
+						polyFull.addPoint((int)poly2.getX(), (int)poly2.getY());
+						polyFull.addPoint((int)poly3.getX(), (int)poly3.getY());
+						polyFull.addPoint((int)poly4.getX(), (int)poly4.getY());
+						polyFull.addPoint((int)poly5.getX(), (int)poly5.getY());
+						polyFull.addPoint((int)poly6.getX(), (int)poly6.getY());
+						
+						g2D.fill(polyFull);
+					}
+					
+					//write app names and connect with line to square
+					fontSize = (int)(size/2);
+					font = new Font("Sans", Font.PLAIN, fontSize);
+				    g2D.setFont(font);
+				    g2D.setColor(Color.BLACK);
+				    int yString = y;
+					int iter2 = 0;
+					currentHeight = y;
+					for(String n : appNames) {
+						if(heights[iter2] >= fontSize) {
+							yString += (heights[iter2]/2);
+						} else {
+							yString += fontSize/2;
+						}
+						
+						if(xString == (int)(x + size*6)) {
+							
+							g2D.drawString(n, xString, yString);
+							g2D.drawLine(xString, yString+2, (int)(xString + size*4), yString+2);
+							g2D.drawLine(xString, yString+2, (int)(x +size*4), (int)(currentHeight + (heights[iter2]/2)));
+						
+						} else if(xString == (int)(x - size*6)) {
+						
+							g2D.drawString(n, xString, yString);
+							g2D.drawLine(xString, yString+2, (int)(xString + size*4), yString+2);
+							g2D.drawLine((int)(xString + size*4), yString+2, x, (int)(currentHeight + (heights[iter2]/2)));
+						}
+						
+						if(heights[iter2] >= fontSize) {
+							yString += (heights[iter2])/2;
+						} else {
+							yString += fontSize/2;
+						}
+						currentHeight += (heights[iter2]);
+						iter2++;
+					}
 				}
 			} 
 			
@@ -938,12 +1127,13 @@ public class View extends JPanel  {
 				if(category == 0) {
 					allShapes = new Shape[3];
 					
-					//map usage to 360 degree and paint diagramm
+					//map usage to 360 degree
 					int enter360 = (enter * 360)/usage;
 					int comm360 = (comm * 360)/usage;
 					int orga360 = (orga * 360)/usage;
 					
 					int i = 0;
+					//make sure pie chart is 360 degrees
 					while((enter360+comm360+orga360) != 360) {
 						if(i % 3 == 0) {
 							enter360++; 
@@ -954,7 +1144,7 @@ public class View extends JPanel  {
 						}
 					}
 					
-					//Debug.println("Total: " + usage + " Enter: "+ enter + " Comm: " + comm + " Orga: " + orga);
+					//set color and draw each arc
 					g2D.setColor(yellow);
 					allShapes[0] = new Arc2D.Double(bounds, 0, enter360, Arc2D.PIE);
 					g2D.fill(allShapes[0]);
@@ -967,18 +1157,36 @@ public class View extends JPanel  {
 					allShapes[2] = new Arc2D.Double(bounds, enter360+comm360, orga360, Arc2D.PIE);
 					g2D.fill(allShapes[2]);
 					
-					//draw info for clicked arc
-					for(int j = 0; j < 3; j++) {
+					
+					//get points for drawing the strings and line to each arc
+					Point2D[] infoXY = new Point2D[allShapes.length];
+					int fontSize = 14;
+					
+					for(int j = 0; j < allShapes.length; j++) {
 						Point2D start = ((Arc2D)allShapes[j]).getStartPoint();
 						Point2D end = ((Arc2D)allShapes[j]).getEndPoint();
 						Point2D center = new Point2D.Double(((Arc2D)allShapes[j]).getCenterX(), ((Arc2D)allShapes[j]).getCenterY());
 						
-						Point2D info = new Point2D.Double((start.getX() + end.getX() - 1.2*center.getX()), 
-															(start.getY() + end.getY() - 1.2*center.getY()));
+						Point2D info = new Point2D.Double((start.getX() + end.getX() - center.getX()), 
+															(start.getY() + end.getY() - center.getY()));
 						if(((Arc2D)allShapes[j]).getAngleExtent() >= 180) {
-							info.setLocation(1.8*center.getX() - info.getX(), 1.8*center.getY() - info.getY());
+							info.setLocation(1.8*center.getX() - info.getX(), 1.6*center.getY() - info.getY());
+						} else if(((Arc2D)allShapes[j]).getAngleExtent() >= 90) {
+							info.setLocation(info.getX() + (info.getX() - center.getX()), info.getY() + (info.getY() - center.getY()));
 						}
 						
+						infoXY[j] = info;
+						
+						for(int k = 0; k < j; k++) {
+							if((info.getY() < (infoXY[k].getY()+fontSize)) && (info.getY() > (infoXY[k].getY()-fontSize))) {
+								if(info.getY() < infoXY[k].getY()) {
+									info.setLocation(info.getX(), info.getY() - 2*fontSize);
+								} else {
+									info.setLocation(info.getX(), info.getY() + 2*fontSize);
+								}
+							}
+						}
+												
 						String infoString = "";
 						
 						if(j == 0) {
@@ -993,29 +1201,47 @@ public class View extends JPanel  {
 						
 						g2D.setColor(Color.BLACK);
 						g2D.drawString(infoString, (int)info.getX(), (int)info.getY());
+						
+						g2D.drawLine((int)info.getX()-8, (int)info.getY()+2, (int)(info.getX()+(fontSize*infoString.length()*0.5)), (int)info.getY()+2);
+						
+						Arc2D half = (Arc2D)allShapes[j];
+						half.setAngleExtent(half.getAngleExtent()/2);
+						
+						Point2D lineStart = new Point2D.Double(0,0);
+						
+						if(info.getX() > getWidth()/2) {
+							lineStart.setLocation(info.getX()-8, info.getY()+2);
+						} else {
+							lineStart.setLocation(info.getX()+(fontSize*infoString.length()*0.5), info.getY()+2);
+						}
+							
+						g2D.drawLine((int)lineStart.getX(), (int)lineStart.getY(), (int)half.getEndPoint().getX(), (int)half.getEndPoint().getY());
 					}
 					
 				} else if(category == 1 || category == 2 || category == 3) {
+					//same as category == 0, but this time dynamic number of arcs
 					String cat = "";
 					int total = 0;
+					Color color = yellow;
 					switch(category) {
 						case 1:
 							cat = "Unterhaltung";
-							g2D.setColor(yellow);
+							color = yellow;
 							total = enter;
 							break;
 						case 2:
 							cat = "Kommunikation";
-							g2D.setColor(red);
+							color = red;
 							total = comm;
 							break;
 						case 3:
 							cat = "Organisatorisches";
-							g2D.setColor(blue);
+							color = blue;
 							total = orga;
 							break;
 					}
 					
+					g2D.setColor(color);
 					g2D.fillOval((getWidth()/2)-size/2, (int)(getHeight()/2)-size/2, size, size);
 										
 					//get total 360 degree value
@@ -1047,37 +1273,51 @@ public class View extends JPanel  {
 					for(int i = 0; i < appDuration.length; i++) {
 						int arcSize = (appDuration[i] * 360)/total;
 						//set Color
-						if(i%2 == 0) {
-							g2D.setColor(new Color(0,0,0,50));
-						} else {
-							g2D.setColor(new Color(255,255,255,50));
-						}
 						
 						if(i == appDuration.length-1) {
 							arcSize = 360 - totalArcSize;
 						}
 						
 						allShapes[i] = new Arc2D.Double(bounds, totalArcSize, arcSize, Arc2D.PIE);
+						if(i%2 == 0) {
+							g2D.setColor(new Color(0,0,0,50));
+						} else {
+							g2D.setColor(new Color(255,255,255,50));
+						}
+						
 						g2D.fill(allShapes[i]);
 						
 						totalArcSize += arcSize;
 					}
 					
-					/*
-					//draw info for clicked arc
-					if(activeShape != null) {
-						Point2D start = ((Arc2D)activeShape).getStartPoint();
-						Point2D end = ((Arc2D)activeShape).getEndPoint();
-						Point2D center = new Point2D.Double(((Arc2D)activeShape).getCenterX(), ((Arc2D)activeShape).getCenterY());
+					Point2D[] infoXY = new Point2D[allShapes.length];
+					int fontSize = 14;
+					
+					for(int i = 0; i < allShapes.length; i++) {
+						Point2D start = ((Arc2D)allShapes[i]).getStartPoint();
+						Point2D end = ((Arc2D)allShapes[i]).getEndPoint();
+						Point2D center = new Point2D.Double(((Arc2D)allShapes[i]).getCenterX(), ((Arc2D)allShapes[i]).getCenterY());
 						
-						Point2D info = new Point2D.Double((start.getX() + end.getX() - 1.2*center.getX()), 
-															(start.getY() + end.getY() - 1.2*center.getY()));
-						if(((Arc2D)activeShape).getAngleExtent() >= 180) {
-							info.setLocation(1.8*center.getX() - info.getX(), 1.8*center.getY() - info.getY());
+						Point2D info = new Point2D.Double((start.getX() + end.getX() - center.getX()), 
+															(start.getY() + end.getY() - center.getY()));
+						if(((Arc2D)allShapes[i]).getAngleExtent() >= 180) {
+							info.setLocation(1.8*center.getX() - info.getX(), 1.6*center.getY() - info.getY());
+						} else if(((Arc2D)allShapes[i]).getAngleExtent() >= 90) {
+							info.setLocation(info.getX() + (info.getX() - center.getX()), info.getY() + (info.getY() - center.getY()));
+						}
+						
+						infoXY[i] = info;
+						
+						for(int j = 0; j < i; j++) {
+							if((info.getY() < (infoXY[j].getY()+fontSize)) && (info.getY() > (infoXY[j].getY()-fontSize))) {
+								if(info.getY() < infoXY[j].getY()) {
+									info.setLocation(info.getX(), info.getY() - 2*fontSize);
+								} else {
+									info.setLocation(info.getX(), info.getY() + 2*fontSize);
+								}
+							}
 						}
 												
-						int i = getActiveShapeFromAll(activeShape, allShapes);
-						
 						String infoString = "";			
 						
 						int iter = 0;
@@ -1092,30 +1332,26 @@ public class View extends JPanel  {
 						
 						g2D.setColor(Color.BLACK);
 						g2D.drawString(infoString, (int)info.getX(), (int)info.getY());
-					}
-					*/
-					
-					int numApps = allShapes.length;
-					
-					String[] infoStrings = new String[numApps];
-					
-					for(int i = 0; i < numApps; i++) {
-						int iter = 0;
-						for (App a : apps) {
-							if(a.getCategory().equals(cat)) {								
-								if(iter == i) {
-									infoStrings[i] = new String(a.getName() + " \r\n" + printTimeInHours(a.getTotal()));
-								}
-								iter++;
-							}
+						
+						g2D.drawLine((int)info.getX()-8, (int)info.getY()+2, (int)(info.getX()+(fontSize*infoString.length()*0.5)), (int)info.getY()+2);
+						
+						Arc2D half = (Arc2D)allShapes[i];
+						half.setAngleExtent(half.getAngleExtent()/2);
+						
+						Point2D lineStart = new Point2D.Double(0,0);
+						
+						if(info.getX() > getWidth()/2) {
+							lineStart.setLocation(info.getX()-8, info.getY()+2);
+						} else {
+							lineStart.setLocation(info.getX()+(fontSize*infoString.length()*0.5), info.getY()+2);
 						}
+							
+						g2D.drawLine((int)lineStart.getX(), (int)lineStart.getY(), (int)half.getEndPoint().getX(), (int)half.getEndPoint().getY());
 					}
-					
-					int fontSize = 14;
 					
 					g2D.setColor(Color.white);
 					
-					Rectangle2D rect = new Rectangle2D.Double(infoX, infoY, fontSize*10, numApps*(fontSize) + 2);
+					Rectangle2D rect = new Rectangle2D.Double(infoX, infoY, (fontSize*cat.length()*0.6)+5, fontSize + 5);
 					activeShape = rect;
 					g2D.fill(rect);
 					
@@ -1125,19 +1361,11 @@ public class View extends JPanel  {
 					Font font = new Font("Sans", Font.PLAIN, fontSize);
 				    g2D.setFont(font);
 					
-					for(int i = 0; i < numApps; i++) {
-						g2D.drawString(infoStrings[i], infoX, infoY + fontSize* (i+1));
-					}
+				    g2D.drawString(cat, infoX + 2, infoY + fontSize + 2);
 				}
 			}
 		}
 
-		
-		
-		
-			
-		
-		
 		public void setModel(Model model) {
 			this.model = model;
 		}
