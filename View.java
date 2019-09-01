@@ -11,6 +11,7 @@ import java.awt.Shape;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -26,13 +27,13 @@ public class View extends JPanel  {
 	     private int counter = 0;
 	     
 	     //visualisation mode
-	     private int mode = 0;
+	     private int mode = 3;
 
 	     //app category
 	     //0=all, 1=entertainment, 2=communication, 3=organisation
 	     private int category = 0; 
 	     
-	     private int days = 0;
+	     private int days = 1;
 	     
 	     //for zooming per Klick
 	     private double zoom = 1.0;
@@ -55,7 +56,7 @@ public class View extends JPanel  {
 	     private ArrayList<App> apps = new ArrayList<App>();
 	     private ArrayList<Usage> usage = new ArrayList<Usage>();
 	     
-	     private int numDays = 1;
+	     private int numDays = 3;
 	     
 	     //hourly usage sorted by category
 	     private int[] hourlyUsage;
@@ -495,9 +496,9 @@ public class View extends JPanel  {
 						heights[iter] = height;
 						Rectangle2D appRect = new Rectangle2D.Double(x,y+currentHeight, size*4, height);
 						if(iter%2 == 0) {
-							g2D.setColor(new Color(0,0,0,50));
+							g2D.setColor(Color.gray);
 						} else {
-							g2D.setColor(new Color(255,255,255,150));
+							g2D.setColor(Color.white);
 						}
 						g2D.fill(appRect);
 						currentHeight += height;
@@ -1301,9 +1302,9 @@ public class View extends JPanel  {
 						Point2D info = new Point2D.Double((start.getX() + end.getX() - center.getX()), 
 															(start.getY() + end.getY() - center.getY()));
 						if(((Arc2D)allShapes[i]).getAngleExtent() >= 180) {
-							info.setLocation(1.8*center.getX() - info.getX(), 1.6*center.getY() - info.getY());
+							info.setLocation(info.getX() - center.getX(), info.getY() - center.getY());
 						} else if(((Arc2D)allShapes[i]).getAngleExtent() >= 90) {
-							info.setLocation(info.getX() + (info.getX() - center.getX()), info.getY() + (info.getY() - center.getY()));
+							info.setLocation(info.getX() + (info.getX() - center.getX())/3, info.getY() + (info.getY() - center.getY())/3);
 						}
 						
 						infoXY[i] = info;
@@ -1348,21 +1349,196 @@ public class View extends JPanel  {
 							
 						g2D.drawLine((int)lineStart.getX(), (int)lineStart.getY(), (int)half.getEndPoint().getX(), (int)half.getEndPoint().getY());
 					}
+				}
+			}
+			//mix between mode 0 and 2
+			else if(mode == 3) {
+				double size = getWidth()/48;
+				
+			    Color yellow = new Color(255, 137, 3, 25);
+			    Color blue = new Color(35, 64, 153, 25);
+			    
+				allShapes = new Shape[hourlyUsage.length];
+				float angle = -15;
+				
+				//for loops: days and hours
+				for(int row = 0; row < hourlyUsage.length/24; row++) {
+					Rectangle2D bounds = new Rectangle2D.Double(getWidth()/2 - size*(7-row+1), 
+							getHeight()/2 - size*(7-row+1), size*(7-row+1)*2, size*(7-row+1)*2);
+					float currentAngle = 90;
+					for(int column = 0; column < 24; column++) {
+						Arc2D arc = new Arc2D.Double(bounds, currentAngle, angle, Arc2D.PIE);
+						currentAngle += angle;
+						
+						allShapes[24*row+column] = arc;						
+						
+						//map duration from 0 to 60 to color from 255 to 0
+						int color = 0; 
+						
+						color = 255-(int)(hourlyUsage[24*row+column]*4.25);
+						
+						g2D.setColor(new Color(color, color, color, 255));
+						g2D.fill(arc);
+					}
+				}
+				
+				//if any box is clicked it turn into active shape
+				if(activeShape != null) {
+					//g2D.setColor(new Color(0,0,0,255));
+					//g2D.fill(activeShape);
 					
-					g2D.setColor(Color.white);
+					int i = getActiveShapeFromAll(activeShape, allShapes);
+
+					String cat = "";
+					/*if(category == 0) {
+						
+					} else */
+					if(category == 1) {
+						cat = "Unterhaltung";
+					} else if(category == 2) {
+						cat = "Kommunikation";
+					} else if(category == 3) {
+						cat = "Organisatorisches";
+					}
 					
-					Rectangle2D rect = new Rectangle2D.Double(infoX, infoY, (fontSize*cat.length()*0.6)+5, fontSize + 5);
-					activeShape = rect;
-					g2D.fill(rect);
+					int appCount = 0;
+					ArrayList<String> appNames = new ArrayList<String>();
+					ArrayList<Integer> appDuration = new ArrayList<Integer>();
 					
-					g2D.setColor(Color.black);
-					g2D.draw(rect);
+					//get names and usage duration from apps that are used during chosen hour
+					for (App a : apps) {
+						if(category == 0) {
+							for(Usage u : a.getUsage()) {
+								if((u.getDay()*24) + u.getHour() == i) {
+									appCount++;
+									appNames.add(new String(a.getName() + ": " + u.getDuration() + "min"));
+									appDuration.add(u.getDuration());
+								}
+							}
+						} else {
+							if(a.getCategory().contentEquals(cat)) {
+								for(Usage u : a.getUsage()) {
+									if((u.getDay()*24) + u.getHour() == i) {
+										appCount++;
+										appNames.add(new String(a.getName() + ": " + u.getDuration() + "min"));
+										appDuration.add(u.getDuration());
+									}
+								}
+							}
+						}
+					}
 					
+					double activeStart = ((Arc2D)activeShape).getAngleStart();
+					double activeExtend = ((Arc2D)activeShape).getAngleExtent();
+
+					int row = i%7;
+					Rectangle2D activeBounds = new Rectangle2D.Double(getWidth()/2 - size*16, 
+							getHeight()/2 - size*16, size*32, size*32);
+
+					Arc2D infoArc = new Arc2D.Double(activeBounds, activeStart, activeExtend, Arc2D.PIE);
+					int color = 255-(int)(hourlyUsage[i]*4.25);
+					g2D.setColor(new Color(color, color, color, 255));
+					g2D.fill(infoArc);
+					
+					int fullDuration = 0;
+					for(int d : appDuration) {
+						fullDuration += d;
+					}
+					
+					double currentAngle = activeStart;
+					
+					int fontSize = (int)(size/2);
+					Point2D[] infoXY = new Point2D[appCount];
+					double[] angles = new double[appCount];
+					double multiplier = (activeExtend)/fullDuration;
+					int iter = 0;
+					//get points for drawing line to infostring
+					for(int d : appDuration) {
+						double anglePart = d * multiplier;
+						angles[iter] = anglePart;
+						Arc2D appArc = new Arc2D.Double(activeBounds, currentAngle, anglePart, Arc2D.PIE);
+						
+						/*Point2D start = appArc.getStartPoint();
+						Point2D end = appArc.getEndPoint();
+					
+						Point2D center = new Point2D.Double(appArc.getCenterX(), appArc.getCenterY());
+						Point2D info = new Point2D.Double(start.getX() + end.getX() - center.getX(), start.getY() + end.getY() -center.getY());
+						
+						
+						Point2D center = new Point2D.Double(appArc.getCenterX(), appArc.getCenterY());
+						
+						Arc2D halfArc = new Arc2D.Double(activeBounds, currentAngle, anglePart/2, Arc2D.PIE);
+						Point2D lineStart = halfArc.getEndPoint();
+						Point2D lineEnd = new Point2D.Double(lineStart.getX() + 0.8*(lineStart.getX()-center.getX()),
+														lineStart.getY() + 0.8*(lineStart.getY()-center.getY()));
+						
+						//check if line is in way of other strings later
+						for(int j = 0; j < iter; j++) {
+							if((lineEnd.getY() < (infoXY[j].getY()+fontSize)) && (lineEnd.getY() > (infoXY[j].getY()-fontSize))) {
+								if(lineEnd.getY() < infoXY[j].getY()) {
+									lineEnd.setLocation(lineEnd.getX(), lineEnd.getY() - 2*fontSize);
+								} else {
+									lineEnd.setLocation(lineEnd.getX(), lineEnd.getY() + 2*fontSize);
+								}
+							}
+						}
+						
+						infoXY[iter] = lineEnd;
+						*/
+						
+						if(iter%2 == 0) {
+							g2D.setColor(new Color(0,0,0,50));
+						} else {
+							g2D.setColor(new Color(255,255,255,150));
+						}
+						g2D.fill(appArc);
+						currentAngle += anglePart;
+						iter++;
+						//g2D.setColor(Color.black);
+						//g2D.drawLine((int)lineStart.getX(), (int)lineStart.getY(), (int)lineEnd.getX(), (int)lineEnd.getY());
+					}
+						
+					int iterator = 0;
+					
+					//draw middle again
+					for(row = 0; row < hourlyUsage.length/24; row++) {
+						Rectangle2D bounds = new Rectangle2D.Double(getWidth()/2 - size*(7-row+1), 
+								getHeight()/2 - size*(7-row+1), size*(7-row+1)*2, size*(7-row+1)*2);
+						currentAngle = 90;
+						for(int column = 0; column < 24; column++) {
+							if(iterator > i) {
+								Arc2D arc = new Arc2D.Double(bounds, currentAngle, angle, Arc2D.PIE);
+								
+								allShapes[24*row+column] = arc;						
+								
+								//map duration from 0 to 60 to color from 255 to 0
+								color = 0; 
+								
+								color = 255-(int)(hourlyUsage[24*row+column]*4.25);
+								
+								g2D.setColor(new Color(color, color, color, 255));
+								g2D.fill(arc);
+							}
+							currentAngle += angle;
+							iterator++;
+						}
+					}
+					
+					//write app names and connect with line to infoArc
 					Font font = new Font("Sans", Font.PLAIN, fontSize);
 				    g2D.setFont(font);
-					
-				    g2D.drawString(cat, infoX + 2, infoY + fontSize + 2);
+				    g2D.setColor(Color.BLACK);	
 				}
+				
+				Rectangle2D b = new Rectangle2D.Double(getWidth()/2-size*16, getHeight()/2-size*16, size*32, size*32);
+				
+				Arc2D night = new Arc2D.Double(b, -30, 180, Arc2D.PIE);
+				g2D.setColor(blue);
+				g2D.fill(night);
+				
+				Arc2D day = new Arc2D.Double(b, 150, 180, Arc2D.PIE);
+				g2D.setColor(yellow);
+				g2D.fill(day);
 			}
 		}
 

@@ -138,24 +138,32 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 					}
 				}
 			} else if(view.getCategory() == 1 || view.getCategory() == 2 || view.getCategory() == 3) {
-				if(view.getActiveShape().contains(x,y)) {
-					
-				} else {
-					for(int i = 0; i < view.getAllShapes().length; i++) {
-						if(view.getAllShapes(i).contains(x,y)) {
-							//view.setActiveShape(view.getAllShapes(i));
-							//view.repaint();
-							break;
-						} else {
-							if(i == view.getAllShapes().length-1) {
-								view.setCategory(0);
-								view.setActiveShape(null);
-								view.repaint();
-							}
+				for(int i = 0; i < view.getAllShapes().length; i++) {
+					if(view.getAllShapes(i).contains(x,y)) {
+						break;
+					} else {
+						if(i == view.getAllShapes().length-1) {
+							view.setCategory(0);
+							view.setActiveShape(null);
+							view.repaint();
 						}
 					}
 				}
 			}
+		} else if(view.getMode() == 3) {
+			
+			for(int i = view.getAllShapes().length-1; i >= 0; i--) {
+				if(view.getAllShapes(i).contains(x,y)) { 
+					view.setActiveShape(view.getAllShapes(i));
+					view.repaint();
+					break;
+				} else if(i == view.getAllShapes().length -1){
+					view.setActiveShape(null);
+				}
+			}
+			
+			view.repaint();
+		
 		}
 	}
 
@@ -166,53 +174,13 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 	}
 
 	public void mousePressed(MouseEvent arg0) {
-		x = arg0.getX();
-		y = arg0.getY();
-		if(view.getMode() == 2) {
-			if(view.getCategory() == 1 || view.getCategory() == 2 || view.getCategory() == 3) {
-				if(view.getActiveShape().contains(x,y)) {
-					int oldX = view.getInfoX();
-					int oldY = view.getInfoY();
-					
-					difX = x-oldX;
-					difY = y-oldY;
-				}
-			}
-		}
 	}
 
 	public void mouseReleased(MouseEvent arg0) {
 	}
 	//for zooming per mausrad 
 	public void mouseDragged(MouseEvent arg0) {
-		//Debug.println("X: " + difX);
-		//Debug.println("Y: " + difY);
-		
-		x = arg0.getX();
-		y = arg0.getY();
-		
-		if(view.getMode() == 2) {
-			view.setInfoX(x - difX);
-			view.setInfoY(y - difY);
-			
-			view.repaint();
-		}
-
-		/*// new x and y are defined by current mouse location subtracted
-					// by previously processed mouse location
-					int newX = arg0.getX() - x;
-					int newY = arg0.getY() - y;
-		 
-					// increment last offset to last processed by drag event.
-					x += newX;
-					y += newY;
-		 
-					// update the canvas locations
-					view.translateX += newX;
-					view.translateY += newY;
 					
-					// schedule a repaint.
-					view.repaint();*/
 	}
 
 	public void mouseMoved(MouseEvent arg0) {		

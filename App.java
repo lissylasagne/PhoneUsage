@@ -27,6 +27,9 @@ public class App {
 		else if(name.equals("Telefon")) {
 			category = "Kommunikation";
 		} 
+		else if(name.equals("Nachrichten")) {
+			category = "Kommunikation";
+		} 
 		else if(name.equals("Reddit")) {
 			category = "Unterhaltung";
 		} 
@@ -46,6 +49,9 @@ public class App {
 			category = "Unterhaltung";
 		}
 		else if(name.equals("Soundcoreset")) {
+			category = "Unterhaltung";
+		}
+		else if(name.equals("Kamera")) {
 			category = "Unterhaltung";
 		}
 		else if(name.equals("UniNow")) {
@@ -71,6 +77,18 @@ public class App {
 		}
 		else if(name.equals("Maps")) {
 			category = "Organisatorisches";
+		}
+		else if(name.equals("Sprachnotizen")) {
+			category = "Organisatorisches";
+		}
+		else if(name.equals("Einstellungen")) {
+			category = "Organisatorisches";
+		}
+		else if(name.equals("Notizen")) {
+			category = "Organisatorisches";
+		}
+		else {
+			Debug.println("TYPO FOUND IN TEXT FILE: " + name);
 		}
 	}
 	

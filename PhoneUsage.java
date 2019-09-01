@@ -1,5 +1,6 @@
 package infovis.phoneUsage;
 
+import infovis.debug.Debug;
 import infovis.gui.GUI;
 
 import javax.swing.JPanel;
@@ -20,13 +21,20 @@ public class PhoneUsage {
 		view = new View();
 		model = new Model();
 		controller = new MouseController();
-		key = new KeyController();
+		
 		view.setModel(model);
 		controller.setModel(model);
 		controller.setView(view);
 		view.addMouseListener(controller);
 		view.addMouseMotionListener(controller);
+		
+		//set key controller
+		key = new KeyController();
 		view.addKeyListener(key);
+		view.setFocusable(true);
+        view.requestFocusInWindow();
+        key.setModel(model);
+        key.setView(view);
 	}
 	
 	public static void main(String[] args) {
