@@ -577,8 +577,6 @@ public class View extends JPanel  {
 					x = -clickPoint.getX()*(zoom-1);
 					y = -clickPoint.getY()*(zoom-1);
 
-					Debug.println("Zoom X: " + x + " Y: " + y);
-					Debug.println("Zoom: " + zoom);
 					g2D.translate(x,y);
 				}
 				g2D.scale(zoom, zoom);
@@ -1159,26 +1157,23 @@ public class View extends JPanel  {
 					int fontSize = 14;
 					
 					for(int j = 0; j < allShapes.length; j++) {
-						Point2D start = ((Arc2D)allShapes[j]).getStartPoint();
-						Point2D end = ((Arc2D)allShapes[j]).getEndPoint();
-						Point2D center = new Point2D.Double(((Arc2D)allShapes[j]).getCenterX(), ((Arc2D)allShapes[j]).getCenterY());
+						Arc2D half = new Arc2D.Double(bounds, ((Arc2D)allShapes[j]).getAngleStart(), ((Arc2D)allShapes[j]).getAngleExtent(), Arc2D.PIE);
+						half.setAngleExtent(half.getAngleExtent()/2);
+						Point2D lineEnd = new Point2D.Double(half.getEndPoint().getX(), half.getEndPoint().getY());
 						
-						Point2D info = new Point2D.Double((start.getX() + end.getX() - center.getX()), 
-															(start.getY() + end.getY() - center.getY()));
-						if(((Arc2D)allShapes[j]).getAngleExtent() >= 180) {
-							info.setLocation(1.8*center.getX() - info.getX(), 1.6*center.getY() - info.getY());
-						} else if(((Arc2D)allShapes[j]).getAngleExtent() >= 90) {
-							info.setLocation(info.getX() + (info.getX() - center.getX()), info.getY() + (info.getY() - center.getY()));
-						}
+						Point2D center = new Point2D.Double(((Arc2D)allShapes[j]).getCenterX(), ((Arc2D)allShapes[j]).getCenterY());
+						double x = center.getX() + 1.4*(lineEnd.getX() - center.getX());
+						double y = center.getY() + 1.4*(lineEnd.getY() - center.getY());
+						Point2D info = new Point2D.Double(x,y);
 						
 						infoXY[j] = info;
 						
 						for(int k = 0; k < j; k++) {
 							if((info.getY() < (infoXY[k].getY()+fontSize)) && (info.getY() > (infoXY[k].getY()-fontSize))) {
 								if(info.getY() < infoXY[k].getY()) {
-									info.setLocation(info.getX(), info.getY() - 2*fontSize);
-								} else {
 									info.setLocation(info.getX(), info.getY() + 2*fontSize);
+								} else {
+									info.setLocation(info.getX(), info.getY() - 2*fontSize);
 								}
 							}
 						}
@@ -1200,18 +1195,15 @@ public class View extends JPanel  {
 						
 						g2D.drawLine((int)info.getX()-8, (int)info.getY()+2, (int)(info.getX()+(fontSize*infoString.length()*0.5)), (int)info.getY()+2);
 						
-						Arc2D half = (Arc2D)allShapes[j];
-						half.setAngleExtent(half.getAngleExtent()/2);
-						
 						Point2D lineStart = new Point2D.Double(0,0);
 						
-						if(info.getX() > getWidth()/2) {
+						if(info.getX() > getWidth()/2 - (getWidth()/12)) {
 							lineStart.setLocation(info.getX()-8, info.getY()+2);
 						} else {
 							lineStart.setLocation(info.getX()+(fontSize*infoString.length()*0.5), info.getY()+2);
 						}
 							
-						g2D.drawLine((int)lineStart.getX(), (int)lineStart.getY(), (int)half.getEndPoint().getX(), (int)half.getEndPoint().getY());
+						g2D.drawLine((int)lineStart.getX(), (int)lineStart.getY(), (int)lineEnd.getX(), (int)lineEnd.getY());
 					}
 					
 				} else if(category == 1 || category == 2 || category == 3) {
@@ -1290,26 +1282,23 @@ public class View extends JPanel  {
 					int fontSize = 14;
 					
 					for(int i = 0; i < allShapes.length; i++) {
-						Point2D start = ((Arc2D)allShapes[i]).getStartPoint();
-						Point2D end = ((Arc2D)allShapes[i]).getEndPoint();
-						Point2D center = new Point2D.Double(((Arc2D)allShapes[i]).getCenterX(), ((Arc2D)allShapes[i]).getCenterY());
+						Arc2D half = new Arc2D.Double(bounds, ((Arc2D)allShapes[i]).getAngleStart(), ((Arc2D)allShapes[i]).getAngleExtent(), Arc2D.PIE);
+						half.setAngleExtent(half.getAngleExtent()/2);
+						Point2D lineEnd = new Point2D.Double(half.getEndPoint().getX(), half.getEndPoint().getY());
 						
-						Point2D info = new Point2D.Double((start.getX() + end.getX() - center.getX()), 
-															(start.getY() + end.getY() - center.getY()));
-						if(((Arc2D)allShapes[i]).getAngleExtent() >= 180) {
-							info.setLocation(info.getX() - center.getX(), info.getY() - center.getY());
-						} else if(((Arc2D)allShapes[i]).getAngleExtent() >= 90) {
-							info.setLocation(info.getX() + (info.getX() - center.getX())/3, info.getY() + (info.getY() - center.getY())/3);
-						}
+						Point2D center = new Point2D.Double(((Arc2D)allShapes[i]).getCenterX(), ((Arc2D)allShapes[i]).getCenterY());
+						double x = center.getX() + 1.4*(lineEnd.getX() - center.getX());
+						double y = center.getY() + 1.4*(lineEnd.getY() - center.getY());
+						Point2D info = new Point2D.Double(x,y);
 						
 						infoXY[i] = info;
 						
 						for(int j = 0; j < i; j++) {
 							if((info.getY() < (infoXY[j].getY()+fontSize)) && (info.getY() > (infoXY[j].getY()-fontSize))) {
 								if(info.getY() < infoXY[j].getY()) {
-									info.setLocation(info.getX(), info.getY() - 2*fontSize);
-								} else {
 									info.setLocation(info.getX(), info.getY() + 2*fontSize);
+								} else {
+									info.setLocation(info.getX(), info.getY() - 2*fontSize);
 								}
 							}
 						}
@@ -1331,30 +1320,70 @@ public class View extends JPanel  {
 						
 						g2D.drawLine((int)info.getX()-8, (int)info.getY()+2, (int)(info.getX()+(fontSize*infoString.length()*0.5)), (int)info.getY()+2);
 						
-						Arc2D half = (Arc2D)allShapes[i];
-						half.setAngleExtent(half.getAngleExtent()/2);
-						
 						Point2D lineStart = new Point2D.Double(0,0);
 						
-						if(info.getX() > getWidth()/2) {
+						if(info.getX() > getWidth()/2 - (getWidth()/12)) {
 							lineStart.setLocation(info.getX()-8, info.getY()+2);
 						} else {
 							lineStart.setLocation(info.getX()+(fontSize*infoString.length()*0.5), info.getY()+2);
 						}
 							
-						g2D.drawLine((int)lineStart.getX(), (int)lineStart.getY(), (int)half.getEndPoint().getX(), (int)half.getEndPoint().getY());
+						g2D.drawLine((int)lineStart.getX(), (int)lineStart.getY(), (int)lineEnd.getX(), (int)lineEnd.getY());
 					}
 				}
 			}
 			//mix between mode 0 and 2
 			else if(mode == 3) {
-				double size = getWidth()/48;
+				double size = getWidth()/28;
 				
+				g2D.setColor(Color.WHITE);
+				g2D.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
+				
+				//draw category buttons
+				int fontSize = (int)(size/1.5);
+
+			    Color red = new Color(255,109,76);
+			    Color grey = new Color(240,240,240);
 			    Color yellow = new Color(255, 137, 3, 25);
 			    Color blue = new Color(35, 64, 153, 25);
+			    g2D.setColor(grey);
 			    
+			    R_all = new Rectangle2D.Double((int)(1.9*size), (int)(size)-fontSize, (int)(3.7*size), (int)(size));
+			    g2D.fill(R_all);
+			    
+			    R_enter = new Rectangle2D.Double((int)(7.4*size), (int)(size)-fontSize, (int)(4.6*size), (int)(size));
+			    g2D.fill(R_enter);
+			    
+			    R_comm = new Rectangle2D.Double((int)(13.9*size), (int)(size)-fontSize, (int)(5.5*size), (int)(size));
+			    g2D.fill(R_comm);
+			    
+			    R_orga = new Rectangle2D.Double((int)(20.65*size), (int)(size)-fontSize, (int)(5.5*size), (int)(size));
+			    g2D.fill(R_orga);
+			    
+			    g2D.setColor(red);
+			    
+			    if(category == 0) {
+			    	g2D.fill(R_all);
+			    } else if(category == 1) {
+			    	g2D.fill(R_enter);
+			    } else if(category == 2) {
+			    	g2D.fill(R_comm);
+			    } else if(category == 3) {
+			    	g2D.fill(R_orga);
+			    }
+			    
+			    Font font = new Font("Sans", Font.PLAIN, fontSize);
+			    g2D.setFont(font);
+			    g2D.setColor(Color.BLACK);
+
+			    g2D.drawString("Insgesamt", (int)(2*size), (int)(size)); 
+			    g2D.drawString("Unterhaltung", (int)(7.5*size), (int)(size));
+			    g2D.drawString("Kommunikation", (int)(14*size), (int)(size)); 
+			    g2D.drawString("Organisatorisch", (int)(20.75*size), (int)(size)); 
+							    
 				allShapes = new Shape[hourlyUsage.length];
 				float angle = -15;
+				size = getWidth()/48;
 				
 				//for loops: days and hours
 				for(int row = 0; row < hourlyUsage.length/24; row++) {
@@ -1370,7 +1399,15 @@ public class View extends JPanel  {
 						//map duration from 0 to 60 to color from 255 to 0
 						int color = 0; 
 						
-						color = 255-(int)(hourlyUsage[24*row+column]*4.25);
+						if(category == 0) {
+							color = 255-(int)(hourlyUsage[24*row+column]*4.25);
+					    } else if(category == 1) {
+					    	color = 255-(int)(hourlyUsageEnter[24*row+column]*4.25);
+					    } else if(category == 2) {
+					    	color = 255-(int)(hourlyUsageComm[24*row+column]*4.25);
+					    } else if(category == 3) {
+					    	color = 255-(int)(hourlyUsageOrga[24*row+column]*4.25);
+					    }
 						
 						g2D.setColor(new Color(color, color, color, 255));
 						g2D.fill(arc);
@@ -1442,7 +1479,7 @@ public class View extends JPanel  {
 					
 					double currentAngle = activeStart;
 					
-					int fontSize = (int)(size/2);
+					//int fontSize = (int)(size/2);
 					Point2D[] infoXY = new Point2D[appCount];
 					double[] angles = new double[appCount];
 					double multiplier = (activeExtend)/fullDuration;
@@ -1452,34 +1489,6 @@ public class View extends JPanel  {
 						double anglePart = d * multiplier;
 						angles[iter] = anglePart;
 						Arc2D appArc = new Arc2D.Double(activeBounds, currentAngle, anglePart, Arc2D.PIE);
-						
-						/*Point2D start = appArc.getStartPoint();
-						Point2D end = appArc.getEndPoint();
-					
-						Point2D center = new Point2D.Double(appArc.getCenterX(), appArc.getCenterY());
-						Point2D info = new Point2D.Double(start.getX() + end.getX() - center.getX(), start.getY() + end.getY() -center.getY());
-						
-						
-						Point2D center = new Point2D.Double(appArc.getCenterX(), appArc.getCenterY());
-						
-						Arc2D halfArc = new Arc2D.Double(activeBounds, currentAngle, anglePart/2, Arc2D.PIE);
-						Point2D lineStart = halfArc.getEndPoint();
-						Point2D lineEnd = new Point2D.Double(lineStart.getX() + 0.8*(lineStart.getX()-center.getX()),
-														lineStart.getY() + 0.8*(lineStart.getY()-center.getY()));
-						
-						//check if line is in way of other strings later
-						for(int j = 0; j < iter; j++) {
-							if((lineEnd.getY() < (infoXY[j].getY()+fontSize)) && (lineEnd.getY() > (infoXY[j].getY()-fontSize))) {
-								if(lineEnd.getY() < infoXY[j].getY()) {
-									lineEnd.setLocation(lineEnd.getX(), lineEnd.getY() - 2*fontSize);
-								} else {
-									lineEnd.setLocation(lineEnd.getX(), lineEnd.getY() + 2*fontSize);
-								}
-							}
-						}
-						
-						infoXY[iter] = lineEnd;
-						*/
 						
 						if(iter%2 == 0) {
 							g2D.setColor(new Color(0,0,0,50));
@@ -1507,9 +1516,15 @@ public class View extends JPanel  {
 								allShapes[24*row+column] = arc;						
 								
 								//map duration from 0 to 60 to color from 255 to 0
-								color = 0; 
-								
-								color = 255-(int)(hourlyUsage[24*row+column]*4.25);
+								if(category == 0) {
+									color = 255-(int)(hourlyUsage[24*row+column]*4.25);
+							    } else if(category == 1) {
+							    	color = 255-(int)(hourlyUsageEnter[24*row+column]*4.25);
+							    } else if(category == 2) {
+							    	color = 255-(int)(hourlyUsageComm[24*row+column]*4.25);
+							    } else if(category == 3) {
+							    	color = 255-(int)(hourlyUsageOrga[24*row+column]*4.25);
+							    }
 								
 								g2D.setColor(new Color(color, color, color, 255));
 								g2D.fill(arc);
@@ -1518,11 +1533,6 @@ public class View extends JPanel  {
 							iterator++;
 						}
 					}
-					
-					//write app names and connect with line to infoArc
-					Font font = new Font("Sans", Font.PLAIN, fontSize);
-				    g2D.setFont(font);
-				    g2D.setColor(Color.BLACK);	
 				}
 				
 				Rectangle2D b = new Rectangle2D.Double(getWidth()/2-size*16, getHeight()/2-size*16, size*32, size*32);

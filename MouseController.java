@@ -131,14 +131,29 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 				}
 			}
 		} else if(view.getMode() == 3) {
+			//category buttons
+			Rectangle2D.Double R_all = view.getR_all();
+			Rectangle2D.Double R_enter = view.getR_enter();
+			Rectangle2D.Double R_comm = view.getR_comm();
+			Rectangle2D.Double R_orga = view.getR_orga();
 			
-			for(int i = view.getAllShapes().length-1; i >= 0; i--) {
-				if(view.getAllShapes(i).contains(x,y)) { 
-					view.setActiveShape(view.getAllShapes(i));
-					view.repaint();
-					break;
-				} else if(i == view.getAllShapes().length -1){
-					view.setActiveShape(null);
+			if(R_all.contains(x,y)) {
+				view.setCategory(0);
+			} else if(R_enter.contains(x,y)) {
+				view.setCategory(1);
+			} else if(R_comm.contains(x,y)) {
+				view.setCategory(2);
+			} else if(R_orga.contains(x,y)) {
+				view.setCategory(3);
+			} else {
+				for(int i = view.getAllShapes().length-1; i >= 0; i--) {
+					if(view.getAllShapes(i).contains(x,y)) { 
+						view.setActiveShape(view.getAllShapes(i));
+						view.repaint();
+						break;
+					} else if(i == view.getAllShapes().length -1){
+						view.setActiveShape(null);
+					}
 				}
 			}
 			
