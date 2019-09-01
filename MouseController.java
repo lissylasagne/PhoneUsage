@@ -2,6 +2,7 @@ package infovis.phoneUsage;
 
 import java.awt.Color;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import infovis.debug.Debug;
@@ -15,6 +16,7 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 	private int difX, difY;
 	
 	private int zoomCounter = 0;
+	private boolean zoomIn = true;
 	
 	
 	public void mouseClicked(MouseEvent arg0) {
@@ -85,45 +87,23 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 			}
 			//zooming per klick
 			//Koordinatensystem unterteilt in rechtecke a 4 stunden zoomen falls klick
-				if(zoomCounter<3) {
-					if(Zoom_1.contains(x,y)) {
-						view.zoomIn();
-						
-					}else if(Zoom_2.contains(x,y)) {
-						view.zoomIn();
-					} else if(Zoom_3.contains(x,y)) {
-						view.zoomIn();
-					} else if(Zoom_4.contains(x,y)) {
-						view.zoomIn();
-					} else if(Zoom_5.contains(x,y)) {
-						view.zoomIn();
-					}else if(Zoom_6.contains(x,y)) {
-						view.zoomIn();
-					}
-					zoomCounter++;
-					
+			
+			if(Zoom_1.contains(x,y) || Zoom_2.contains(x,y) || Zoom_3.contains(x,y) || 
+					Zoom_4.contains(x,y) || Zoom_5.contains(x,y) || Zoom_6.contains(x,y)) {
+				if(zoomIn) {
+					view.zoomIn();
+				} else {
+					view.zoomOut();
 				}
-				else if(zoomCounter>2 && zoomCounter<6) {
-					if(Zoom_1.contains(x,y)) {
-						view.zoomOut();
-						
-					} else if(Zoom_2.contains(x,y)) {
-						view.zoomOut();
-					} else if(Zoom_3.contains(x,y)) {
-						view.zoomOut();
-					} else if(Zoom_4.contains(x,y)) {
-						view.zoomOut();
-					} else if(Zoom_5.contains(x,y)) {
-						view.zoomOut();
-					}else if(Zoom_6.contains(x,y)) {
-						view.zoomOut();
-					}
-					zoomCounter++;
+				Point2D p = new Point2D.Double(x,y);
+				view.setClickPoint(p);
+				zoomCounter++;
+				if(zoomCounter == 3) {
+					zoomIn = !zoomIn;
+					zoomCounter = 0;
 				}
-					
-				 if(zoomCounter== 6) {
-					zoomCounter=0;
-				}
+				Debug.println("X: " + x + " Y: " + y);
+			}
 				
 			
 			 
