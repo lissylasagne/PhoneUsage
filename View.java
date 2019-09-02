@@ -1,4 +1,4 @@
-package infovis.phoneUsage;
+package phoneUsage;
 
 import infovis.debug.Debug;
 import java.awt.Color;
@@ -33,12 +33,9 @@ public class View extends JPanel  {
 	     //0=all, 1=entertainment, 2=communication, 3=organisation
 	     private int category = 0; 
 	     
-	     private int days = 1;
+	     private int days = 0;
 	     
-	     //für zooming per Mausrad
-	     //double translateX;
-	     //double translateY;
-	     //double scale;
+	    
 	     
 	     //buttons for choosing cateory
 	     private Rectangle2D.Double R_all;
@@ -562,9 +559,9 @@ public class View extends JPanel  {
 				}
 			} 
 			
-			//Koordinatensystem Tagesübersicht
+			//coordinate system day view
 			else if(mode == 1) {
-				// für zooming per Klick
+				// for zooming per click
 				if(clickPoint != null) {
 					double x = -clickPoint.getX() * (zoom/2);
 					double y = -clickPoint.getY() * (zoom/2);
@@ -587,7 +584,7 @@ public class View extends JPanel  {
 				}
 				g2D.scale(zoom, zoom);
 			    		
-				//Buttons Tageswechsel      // Überlappt sich noch mit Koordinatensystem
+				//Buttons day changes
 				double size2 = getWidth()/28;
 				g2D.setColor(Color.WHITE);
 				g2D.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
@@ -596,21 +593,21 @@ public class View extends JPanel  {
 			    Color grey = new Color(240,240,240);
 			    g2D.setColor(grey);
 			    
-			    D_1 = new Rectangle2D.Double((int)(1.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    D_1 = new Rectangle2D.Double((int)(2.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
 			    g2D.fill(D_1);
-			    D_2 = new Rectangle2D.Double((int)(5.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    D_2 = new Rectangle2D.Double((int)(6.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
 			    g2D.fill(D_2);
-			    D_3 = new Rectangle2D.Double((int)(8.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    D_3 = new Rectangle2D.Double((int)(10.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
 			    g2D.fill(D_3);
-			    D_4 = new Rectangle2D.Double((int)(12.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			    D_4 = new Rectangle2D.Double((int)(14.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
 			    g2D.fill(D_4);
-			    D_5 = new Rectangle2D.Double((int)(15.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
+			   /* D_5 = new Rectangle2D.Double((int)(15.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
 			    g2D.fill(D_5);
 			    D_6 = new Rectangle2D.Double((int)(19.0*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
 			    g2D.fill(D_6);
 			    D_7 = new Rectangle2D.Double((int)(22.6*size2), (int)(size2)-fontSize, (int)(2.0*size2), (int)(size2));
 			    g2D.fill(D_7);
-			    
+			    */
 			   
 			    
 			    g2D.setColor(red);
@@ -636,54 +633,54 @@ public class View extends JPanel  {
 				Font font = new Font("Sans", Font.PLAIN, fontSize);
 			    g2D.setFont(font);
 			    g2D.setColor(Color.BLACK);
-				g2D.drawString("Tag 1", (int)(2*size2), (int)(size2)); 
-				g2D.drawString("Tag 2", (int)(5.5*size2), (int)(size2));
-			    g2D.drawString("Tag 3", (int)(9*size2), (int)(size2)); 
-			    g2D.drawString("Tag 4", (int)(12.5*size2), (int)(size2)); 
-			    g2D.drawString("Tag 5", (int)(16*size2), (int)(size2));
-			    g2D.drawString("Tag 6", (int)(19.5*size2), (int)(size2));
-			    g2D.drawString("Tag 7", (int)(23*size2), (int)(size2));
+				g2D.drawString("Tag 1", (int)(3*size2), (int)(size2)); 
+				g2D.drawString("Tag 2", (int)(7*size2), (int)(size2));
+			    g2D.drawString("Tag 3", (int)(11*size2), (int)(size2)); 
+			    g2D.drawString("Tag 4", (int)(15*size2), (int)(size2)); 
+			    //g2D.drawString("Tag 5", (int)(16*size2), (int)(size2));
+			    //g2D.drawString("Tag 6", (int)(19.5*size2), (int)(size2));
+			    //g2D.drawString("Tag 7", (int)(23*size2), (int)(size2));
 			    
 			    //g2D.translate(2*size2, 2*size2);
 				
 				
 				
-				// X-Achse Koordinaten (konstant)
+				// X-axis coordinates (constant)
 				//	Start (50,800) Ende (800,800)
 				final int xAchse_x1 = 50;
 				final int xAchse_x2 = 1300;
 				final int xAchse_y = 800;
 				 
-				// Y-Achse Koordinaten (konstant)
+				// Y-axis coordinates (constant)
 				//	Start (50,800) Ende (50,50) 
 				final int yAchse_y1 = 50;
 				final int yAchse_y2 = 800;
 				final int yAchse_x = 50;
 				 
-				//Achsenpfeile durch Hipotenusen von Dreieck
+				//axis arrows through hipotenusis of triangle
 				 
-				// setzen der Dreieckskatheten
+				// sets triangle catethis
 				final int firstLenght = 10;
 				final int secondLenght = 5;
 				 
-				// Größe Nulpunktanzeige
+				// size 0 point advertisment
 				final int originCoordinateLenght = 6;
 				 
-				// Abstand der Zahlen an Achse 
+				// distance numbers axis
 				final int axisLabelDistance = 40;
 				 
 				 
 				
 				  
-				// X-Achse ((50,800) bis (800,800))
+				// X-axis ((50,800) to (800,800))
 				g2D.drawLine(xAchse_x1, xAchse_y,
 						xAchse_x2, xAchse_y);
 				  
-				// Y-Achse ((50,800) bis (50,50))
+				// Y-axis ((50,800) to (50,50))
 				g2D.drawLine(yAchse_x, yAchse_y1,
 						yAchse_x, yAchse_y2);
 				  
-				// Pfeil X-Achse
+				// arrow X-axis
 				g2D.drawLine(xAchse_x2 - firstLenght,
 						xAchse_y - secondLenght,
 						xAchse_x2, xAchse_y);
@@ -691,7 +688,7 @@ public class View extends JPanel  {
 						xAchse_y + secondLenght,
 						xAchse_x2, xAchse_y);
 				  
-				//Pfeil Y-Achse
+				//arrow Y-axis
 				g2D.drawLine(yAchse_x - secondLenght,
 						yAchse_y1 + firstLenght,
 						yAchse_x, yAchse_y1);
@@ -699,13 +696,13 @@ public class View extends JPanel  {
 						yAchse_y1 + firstLenght,
 						yAchse_x, yAchse_y1);
 				  
-				// Zeichnen des Nullpunkts
+				// draws 0point
 				g2D.fillOval(
 						xAchse_x1 - (originCoordinateLenght / 2), 
 						yAchse_y2 - (originCoordinateLenght / 2),
 						originCoordinateLenght, originCoordinateLenght);
 				  
-				// Zeichnen von "Urzeit" und "Dauer"
+				// draws "Urzeit" and "Dauer"
 				g2D.drawString("Uhrzeit", xAchse_x2 - axisLabelDistance / 2,
 						xAchse_y + axisLabelDistance);
 				g2D.drawString("Dauer", yAchse_x - axisLabelDistance,
@@ -713,7 +710,7 @@ public class View extends JPanel  {
 				//g2.drawString("(0, 0)", X_AXIS_FIRST_X_COORD - AXIS_STRING_DISTANCE,
 				     //Y_AXIS_SECOND_Y_COORD + AXIS_STRING_DISTANCE);
 				  
-				// Achsenbeschriftung
+				// axis inscription
 				int xCoordNumbers = 24; // in Stunden
 				int yCoordNumbers = 61; // in Minuten
 				int xLength = (xAchse_x2 - xAchse_x1)
@@ -721,7 +718,7 @@ public class View extends JPanel  {
 				int yLength = (yAchse_y2 - yAchse_y1)
 						/ yCoordNumbers;
 				  
-				// Zeichnen der X-Achsenbeschriftung
+				// draws X-axis insciption
 				for(int i = 0; i < xCoordNumbers;) {
 					g2D.drawLine(xAchse_x1 + (i * xLength),
 							xAchse_y - secondLenght,
@@ -733,7 +730,7 @@ public class View extends JPanel  {
 					i+= 1;
 				}
 				  
-				//Zeichnen der Y-Achsenbeschriftung
+				// draws Y-axis insciption
 				for(int i = 0; i < yCoordNumbers;) {
 					g2D.drawLine(yAchse_x - secondLenght,
 							yAchse_y2 - (i * yLength), 
@@ -745,7 +742,7 @@ public class View extends JPanel  {
 					i+=10;
 				}
 				
-//------------------------------------Punktzeichnung Unterhaltung-------------------------------------------------------------------			
+//------------------------------------poibt drawing  entertainment-------------------------------------------------------------------			
 				if(days == 0) {
 					for(int i = 0;i<24;i++) {
 						g2D.setColor(java.awt.Color.green);
@@ -852,7 +849,7 @@ public class View extends JPanel  {
 					}
 				}
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------			
-//------------------------------------Punktzeichnung Kommunikation----------------------------------------------------------------------------------------------------			
+//------------------------------------point drawing communication----------------------------------------------------------------------------------------------------			
 				if(days == 0) {
 					for(int i = 0;i<24;i++) {
 						Color c = new Color(0,255,255,250);
@@ -959,7 +956,7 @@ public class View extends JPanel  {
 					}
 				}
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------			
-//------------------------------------Punktzeichnung Organisation----------------------------------------------------------------------------------------------------			
+//------------------------------------point drawing organisation----------------------------------------------------------------------------------------------------			
 				if(days == 0) {
 					for(int i = 0;i<24;i++) {
 						Color c = new Color(255, 0, 0,150);

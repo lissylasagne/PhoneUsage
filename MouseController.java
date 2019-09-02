@@ -1,4 +1,4 @@
-package infovis.phoneUsage;
+package phoneUsage;
 
 import java.awt.Color;
 import java.awt.event.*;
@@ -80,7 +80,7 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 				view.setDays(6);
 			} else {
 			//zooming per klick
-			//Koordinatensystem unterteilt in rechtecke a 4 stunden zoomen falls klick
+			//coordinate system divided in rectangles 4 hours zooming if click
 				if(zoomIn) {
 					view.zoomIn();
 				} else {
@@ -163,7 +163,7 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 
 	public void mouseReleased(MouseEvent arg0) {
 	}
-	//for zooming per mausrad 
+	
 	public void mouseDragged(MouseEvent arg0) {
 					
 	}
@@ -179,19 +179,9 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 		this.view  = view;
 	}
 
-	@Override // zooming per mausrad
+	@Override 
 	public void mouseWheelMoved(MouseWheelEvent arg0) {
-		/*if(arg0.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-			
-			// make it a reasonable amount of zoom
-			// .1 gives a nice slow transition
-			view.scale += (.1 * arg0.getWheelRotation());
-			// don't cross negative threshold.
-			// also, setting scale to 0 has bad effects
-			view.scale = Math.max(0.00001, view.scale); 
-			view.repaint();
-		}
-	*/	
+		
 	}
 
 }
