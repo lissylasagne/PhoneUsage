@@ -89,7 +89,7 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 				Point2D p = new Point2D.Double(x,y);
 				view.setClickPoint(p);
 				zoomCounter++;
-				if(zoomCounter == 3) {
+				if(zoomCounter == 2) {
 					zoomIn = !zoomIn;
 					zoomCounter = 0;
 				}

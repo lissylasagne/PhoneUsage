@@ -74,11 +74,12 @@ public class View extends JPanel  {
 	     private Rectangle2D.Double D_7;
 	     
 	     //for zooming per Klick
-	     private double zoom = 1.0;
+	     private int zoom = 1;
 	     private Point2D clickPoint;
 	     private Point2D lastClick;
+	     private int lastZoom;
 	     
-	     private double zoomIn = 2;
+	     private int zoomIn = 2;
 	     
 		 
 		@Override
@@ -565,12 +566,17 @@ public class View extends JPanel  {
 			else if(mode == 1) {
 				// für zooming per Klick
 				if(clickPoint != null) {
-					double x = -clickPoint.getX() * (zoom-1);
-					double y = -clickPoint.getY() * (zoom-1);
+					double x = -clickPoint.getX() * (zoom/2);
+					double y = -clickPoint.getY() * (zoom/2);
 					
 					if(lastClick != null) {
-						//x = x + (lastClick.getX() * zoom);
-						//y = y + (lastClick.getY() * zoom);
+						if(zoom > lastZoom) {
+							x += lastClick.getX() * (zoom/2-1);
+							y += lastClick.getY() * (zoom/2-1);
+						} else if(zoom != 1){
+							x += lastClick.getX() * (zoom/2-1);
+							y += lastClick.getY() * (zoom/2-1);
+						}
 					}
 					
 					lastClick = new Point2D.Double(x,y);
@@ -1663,10 +1669,12 @@ public class View extends JPanel  {
 
 
 		public void zoomIn() {
+			lastZoom = zoom;
 			zoom = zoom * zoomIn;
 		}
 
 		public void zoomOut() {
+			lastZoom = zoom;
 		    zoom = zoom / zoomIn;
 		}
 		  
