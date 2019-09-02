@@ -72,17 +72,11 @@ public class View extends JPanel  {
 	     private Rectangle2D.Double D_5;
 	     private Rectangle2D.Double D_6;
 	     private Rectangle2D.Double D_7;
-
-	     private Rectangle2D.Double Zoom_1;
-	     private Rectangle2D.Double Zoom_2;
-	     private Rectangle2D.Double Zoom_3;
-	     private Rectangle2D.Double Zoom_4;
-	     private Rectangle2D.Double Zoom_5;
-	     private Rectangle2D.Double Zoom_6;
 	     
 	     //for zooming per Klick
 	     private double zoom = 1.0;
 	     private Point2D clickPoint;
+	     private Point2D lastClick;
 	     
 	     private double zoomIn = 2;
 	     
@@ -293,7 +287,7 @@ public class View extends JPanel  {
 				}
 				
 				//if any box is clicked it turn into active shape
-				if(activeShape != null) {
+				if(activeShape != null && activeShape instanceof Rectangle2D) {
 					//g2D.setColor(new Color(0,0,0,255));
 					//g2D.fill(activeShape);
 					
@@ -571,11 +565,17 @@ public class View extends JPanel  {
 			else if(mode == 1) {
 				// für zooming per Klick
 				if(clickPoint != null) {
+					double x = -clickPoint.getX() * (zoom-1);
+					double y = -clickPoint.getY() * (zoom-1);
 					
-					double x = 0;
-					double y = 0;
-					x = -clickPoint.getX()*(zoom-1);
-					y = -clickPoint.getY()*(zoom-1);
+					if(lastClick != null) {
+						//x = x + (lastClick.getX() * zoom);
+						//y = y + (lastClick.getY() * zoom);
+					}
+					
+					lastClick = new Point2D.Double(x,y);
+					
+					Debug.println("X: " + x + " Y: " + y);
 
 					g2D.translate(x,y);
 				}
@@ -738,32 +738,6 @@ public class View extends JPanel  {
 							yAchse_y2 - (i * yLength));
 					i+=10;
 				}
-				
-				//for zoom
-				//zooming sections
-				Color x = new Color(255,109,76,0); // invisible
-				g2D.setColor(x);
-				
-			    Zoom_1 = new Rectangle2D.Double((int)(xAchse_x1 + (0 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
-				g2D.draw(Zoom_1);
-				Zoom_2 = new Rectangle2D.Double((int)(xAchse_x1 + (4 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
-				g2D.draw(Zoom_2);
-				Zoom_3 = new Rectangle2D.Double((int)(xAchse_x1 + (8 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
-				g2D.draw(Zoom_3);
-				Zoom_4 = new Rectangle2D.Double((int)(xAchse_x1 + (12 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
-				g2D.draw(Zoom_4);
-				Zoom_5 = new Rectangle2D.Double((int)(xAchse_x1 + (16 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
-				g2D.draw(Zoom_5);
-				Zoom_6 = new Rectangle2D.Double((int)(xAchse_x1 + (20 * xLength)), (int)(xAchse_x1 + (0.5 * xLength)), (int)(4.25*size2), (int)(16*size2));
-				g2D.draw(Zoom_6);
-				
-				  
-			    	
-			    	
-			    //}
-				//g2D.drawOval(46,796,8,8); // Nullpunkt
-				
-				
 				
 //------------------------------------Punktzeichnung Unterhaltung-------------------------------------------------------------------			
 				if(days == 0) {
@@ -1415,7 +1389,7 @@ public class View extends JPanel  {
 				}
 				
 				//if any box is clicked it turn into active shape
-				if(activeShape != null) {
+				if(activeShape != null && activeShape instanceof Arc2D) {
 					//g2D.setColor(new Color(0,0,0,255));
 					//g2D.fill(activeShape);
 					
@@ -1630,32 +1604,6 @@ public class View extends JPanel  {
 		public Rectangle2D.Double getD_7() {
 			return D_7;
 		}
-		
-		//Rechtecke für Zoom
-		public Rectangle2D.Double getZoom_1() {
-			return Zoom_1;
-		}
-		
-		public Rectangle2D.Double getZoom_2() {
-			return Zoom_2;
-		}
-		
-		public Rectangle2D.Double getZoom_3() {
-			return Zoom_3;
-		}
-		
-		public Rectangle2D.Double getZoom_4() {
-			return Zoom_4;
-		}
-		
-		public Rectangle2D.Double getZoom_5() {
-			return Zoom_5;
-		}
-		
-		public Rectangle2D.Double getZoom_6() {
-			return Zoom_6;
-		}
-		
 		
 		public int getCategory() {
 			return category;

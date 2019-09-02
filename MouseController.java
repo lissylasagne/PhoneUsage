@@ -63,12 +63,6 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 			Rectangle2D.Double D_5 = view.getD_5();
 			Rectangle2D.Double D_6 = view.getD_6();
 			Rectangle2D.Double D_7 = view.getD_7();
-			Rectangle2D.Double Zoom_1 = view.getZoom_1();
-			Rectangle2D.Double Zoom_2 = view.getZoom_2();
-			Rectangle2D.Double Zoom_3 = view.getZoom_3();
-			Rectangle2D.Double Zoom_4 = view.getZoom_4();
-			Rectangle2D.Double Zoom_5 = view.getZoom_5();
-			Rectangle2D.Double Zoom_6 = view.getZoom_6();
 			
 			if(D_1.contains(x,y)) {
 				view.setDays(0);
@@ -84,12 +78,9 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 				view.setDays(5);
 			} else if(D_7.contains(x,y)) {
 				view.setDays(6);
-			}
+			} else {
 			//zooming per klick
 			//Koordinatensystem unterteilt in rechtecke a 4 stunden zoomen falls klick
-			
-			if(Zoom_1.contains(x,y) || Zoom_2.contains(x,y) || Zoom_3.contains(x,y) || 
-					Zoom_4.contains(x,y) || Zoom_5.contains(x,y) || Zoom_6.contains(x,y)) {
 				if(zoomIn) {
 					view.zoomIn();
 				} else {
@@ -102,7 +93,6 @@ public class MouseController implements MouseListener, MouseMotionListener,Mouse
 					zoomIn = !zoomIn;
 					zoomCounter = 0;
 				}
-				Debug.println("X: " + x + " Y: " + y);
 			}
 				
 			
